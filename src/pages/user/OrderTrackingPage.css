@@ -1,0 +1,28 @@
+/* OrderTrackingPage.css - Mobile Responsive Card */
+
+.tracking-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.tracking-card {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* --- Mobile Responsiveness --- */
+@media (max-width: 768px) {
+    .tracking-container {
+        margin: 20px auto;
+        padding: 0 16px;
+    }
+
+    .tracking-card {
+        padding: 20px 14px;
+        border-radius: 16px;
+    }
+}

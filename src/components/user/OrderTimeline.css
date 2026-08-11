@@ -1,0 +1,95 @@
+/* OrderTimeline.css - Spaced-Out Light Stepper */
+
+.timeline-stepper-container {
+    padding: 40px 20px;
+    width: 100%;
+}
+
+.timeline-stepper {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    position: relative;
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+/* Individual Step Item */
+.stepper-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    min-width: 120px; /* Ensures minimum spacing per step */
+}
+
+/* Step Circle / Icon Box */
+.step-icon-box {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    border: 2px solid #cbd5e1;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.04);
+}
+
+/* Active Step Styling */
+.stepper-item.active .step-icon-box {
+    background-color: #059669;
+    border-color: #059669;
+    color: #ffffff;
+    box-shadow: 0 6px 18px rgba(5, 150, 105, 0.35);
+    transform: scale(1.1);
+}
+
+/* Completed Step Styling */
+.stepper-item.completed .step-icon-box {
+    background-color: #ecfdf5;
+    border-color: #10b981;
+    color: #059669;
+}
+
+/* Step Title / Label with Added Top Gap */
+.step-label {
+    margin-top: 18px; /* Increased vertical gap below icons */
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #64748b;
+    text-align: center;
+    line-height: 1.3;
+    transition: color 0.3s ease;
+}
+
+.stepper-item.active .step-label {
+    color: #059669;
+    font-weight: 800;
+}
+
+.stepper-item.completed .step-label {
+    color: #0f172a;
+    font-weight: 700;
+}
+
+/* Connecting Bar Line Centered Behind Icons */
+.stepper-line {
+    position: absolute;
+    top: 28px;
+    left: 10%;
+    right: 10%;
+    height: 3px;
+    background-color: #e2e8f0;
+    z-index: 1;
+}
+
+.stepper-line-progress {
+    height: 100%;
+    background-color: #059669;
+    transition: width 0.4s ease-out;
+}

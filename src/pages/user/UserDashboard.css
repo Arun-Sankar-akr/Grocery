@@ -1,0 +1,24 @@
+/* UserDashboard.css - Mobile Responsive Layout */
+
+.user-layout {
+    display: flex;
+    max-width: 1200px;
+    margin: 30px auto;
+    gap: 30px;
+    padding: 0 20px;
+}
+
+.user-main-panel {
+    flex: 1;
+}
+
+/* --- Mobile Responsiveness --- */
+@media (max-width: 768px) {
+    .user-layout {
+        flex-direction: column;
+        /* Stacks sidebar and main content vertically */
+        margin: 16px auto;
+        gap: 20px;
+        padding: 0 16px;
+    }
+}

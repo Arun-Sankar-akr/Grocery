@@ -1,0 +1,100 @@
+/* ProductTable.css - Mobile Responsive */
+
+.product-table-wrapper {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    overflow-x: auto;
+    /* Touch scroll on small viewports */
+    -webkit-overflow-scrolling: touch;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.custom-table {
+    width: 100%;
+    min-width: 600px;
+    /* Ensures columns maintain layout structure */
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.custom-table th {
+    background-color: #f8fafc;
+    padding: 14px 16px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #64748b;
+    border-bottom: 1px solid #e2e8f0;
+    white-space: nowrap;
+}
+
+.custom-table td {
+    padding: 14px 16px;
+    font-size: 0.85rem;
+    border-bottom: 1px solid #f1f5f9;
+    color: #0f172a;
+    white-space: nowrap;
+}
+
+.table-product-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+}
+
+.table-product-thumb {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.stock-pill {
+    padding: 4px 10px;
+    border-radius: 50px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    display: inline-block;
+}
+
+.stock-pill.in-stock {
+    background-color: #d1fae5;
+    color: #059669;
+}
+
+.stock-pill.low-stock {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.action-icon-btn {
+    padding: 8px;
+    border-radius: 8px;
+    color: #64748b;
+    transition: all 0.2s ease;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+.action-icon-btn.edit:hover {
+    background-color: #e0f2fe;
+    color: #0284c7;
+}
+
+.action-icon-btn.delete:hover {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+@media (max-width: 600px) {
+
+    .custom-table th,
+    .custom-table td {
+        padding: 10px 12px;
+        font-size: 0.8rem;
+    }
+}

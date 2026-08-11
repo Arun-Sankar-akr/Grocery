@@ -1,0 +1,114 @@
+/* Footer.css - Mobile Responsive */
+
+.footer {
+    background: #020617;
+    color: #94a3b8;
+    padding: 60px 24px 30px;
+    border-top: 1px solid #1e293b;
+    font-size: 0.85rem;
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.footer-brand {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.footer-brand span {
+    color: var(--primary-color, #10b981);
+}
+
+.footer-heading {
+    font-size: 1rem;
+    color: #ffffff;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+.footer-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 0;
+}
+
+.footer-links a {
+    color: #94a3b8;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+    color: var(--primary-color, #10b981);
+}
+
+.newsletter-box {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.newsletter-input {
+    background: #0f172a;
+    border: 1px solid #334155;
+    padding: 10px;
+    border-radius: var(--radius-sm, 6px);
+    color: #ffffff;
+    font-size: 0.8rem;
+    flex: 1;
+    outline: none;
+}
+
+.newsletter-btn {
+    background: var(--primary-color, #10b981);
+    color: #ffffff;
+    font-weight: 700;
+    padding: 10px 16px;
+    border-radius: var(--radius-sm, 6px);
+    border: none;
+    cursor: pointer;
+}
+
+.footer-bottom {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-top: 24px;
+    border-top: 1px solid #1e293b;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+/* --- Mobile Responsiveness --- */
+@media (max-width: 640px) {
+    .footer {
+        padding: 40px 16px 20px;
+    }
+
+    .footer-container {
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
+
+    .footer-bottom {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+    }
+}

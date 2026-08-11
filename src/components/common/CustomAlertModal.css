@@ -1,0 +1,114 @@
+/* AlertModal.css - Mobile Responsive */
+
+.alert-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(6px);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.alert-modal-card {
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 400px;
+    border-radius: 20px;
+    padding: 28px;
+    text-align: center;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+    animation: popIn 0.25s ease-out;
+}
+
+@keyframes popIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.alert-icon-wrapper {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+}
+
+.alert-icon-wrapper.warning {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.alert-icon-wrapper.success {
+    background-color: #d1fae5;
+    color: #059669;
+}
+
+.alert-modal-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 8px;
+}
+
+.alert-modal-message {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+
+.alert-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.alert-btn-primary {
+    flex: 1;
+    background-color: #059669;
+    color: #ffffff;
+    font-weight: 700;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.alert-btn-primary:hover {
+    background-color: #047857;
+}
+
+.alert-btn-secondary {
+    flex: 1;
+    background-color: #f1f5f9;
+    color: #475569;
+    font-weight: 600;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    border: none;
+    cursor: pointer;
+}
+
+@media (max-width: 480px) {
+    .alert-modal-card {
+        padding: 20px 16px;
+    }
+
+    .alert-actions {
+        flex-direction: column; /* Stacks action buttons on mobile */
+    }
+}

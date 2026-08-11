@@ -1,0 +1,132 @@
+/* LoginPage.css - Mobile Responsive Card & Form */
+
+.login-page-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  padding: 20px;
+}
+
+.login-card-container {
+  background: #ffffff;
+  width: 100%;
+  max-width: 420px;
+  border-radius: 20px;
+  padding: 36px 28px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.login-brand-logo {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.login-brand-logo span {
+  color: #059669;
+}
+
+.role-tab-group {
+  display: flex;
+  background-color: #f1f5f9;
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 24px;
+}
+
+.role-tab-btn {
+  flex: 1;
+  padding: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: 8px;
+  color: #64748b;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.role-tab-btn.active {
+  background-color: #ffffff;
+  color: #059669;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.login-field {
+  margin-bottom: 16px;
+}
+
+.login-field label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 6px;
+}
+
+.login-field input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.login-field input:focus {
+  border-color: #059669;
+}
+
+.login-submit-btn {
+  width: 100%;
+  background-color: #059669;
+  color: #ffffff;
+  padding: 12px;
+  border-radius: 10px;
+  font-weight: 700;
+  margin-top: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.login-submit-btn:hover {
+  background-color: #047857;
+}
+
+/* --- Mobile Responsiveness --- */
+@media (max-width: 480px) {
+  .login-page-wrapper {
+    padding: 16px;
+  }
+
+  .login-card-container {
+    padding: 24px 18px;
+    border-radius: 16px;
+  }
+
+  .login-brand-logo {
+    font-size: 1.5rem;
+  }
+
+  .role-tab-btn {
+    padding: 10px 6px;
+    /* Larger touch targets for mobile fingers */
+    font-size: 0.75rem;
+  }
+
+  .login-field input,
+  .login-submit-btn {
+    padding: 14px 12px;
+    /* Touch-friendly tap areas */
+  }
+}

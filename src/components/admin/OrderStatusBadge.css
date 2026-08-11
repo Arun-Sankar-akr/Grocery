@@ -1,0 +1,54 @@
+/* OrderStatusBadge.css - Clean Light & Dark Badge System */
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 50px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
+
+.badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: currentColor;
+    box-shadow: 0 0 6px currentColor;
+    flex-shrink: 0;
+}
+
+.status-badge.placed {
+    background-color: #fef3c7;
+    color: #d97706;
+    border-color: #fcd34d;
+}
+
+.status-badge.packing {
+    background-color: #e0f2fe;
+    color: #0284c7;
+    border-color: #bae6fd;
+}
+
+.status-badge.out-for-delivery {
+    background-color: #f3e8ff;
+    color: #9333ea;
+    border-color: #e9d5ff;
+}
+
+.status-badge.delivered {
+    background-color: #d1fae5;
+    color: #059669;
+    border-color: #a7f3d0;
+}
+
+.status-badge.cancelled {
+    background-color: #fee2e2;
+    color: #dc2626;
+    border-color: #fca5a5;
+}

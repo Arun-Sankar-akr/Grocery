@@ -1,0 +1,85 @@
+/* HomePage.css - Mobile Responsive Layout */
+
+.home-container {
+    min-height: 100vh;
+    background-color: var(--light-bg);
+}
+
+.section-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 24px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 32px;
+}
+
+.section-main-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-dark);
+}
+
+.section-sub-title {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+.view-all-link {
+    color: var(--primary-color);
+    font-weight: 600;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 24px;
+}
+
+/* --- Mobile Responsiveness --- */
+@media (max-width: 768px) {
+    .section-wrapper {
+        padding: 36px 16px;
+    }
+
+    .section-header {
+        flex-direction: row;
+        align-items: flex-end;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .section-main-title {
+        font-size: 1.4rem;
+    }
+
+    .section-sub-title {
+        font-size: 0.8rem;
+    }
+
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+        /* 2-Column Product Grid for Mobile */
+        gap: 12px;
+    }
+}
+
+@media (max-width: 420px) {
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .products-grid {
+        grid-template-columns: 1fr;
+        /* Single column for extra small screens */
+    }
+}

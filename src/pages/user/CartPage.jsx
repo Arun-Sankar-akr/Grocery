@@ -11,7 +11,7 @@ import './CartPage.css';
 export default function CartPage({ onOpenCart, onOpenLogin, onOrderPlaced }) {
     const { cartItems, removeFromCart, cartTotal, clearCart } = useCart();
     const { currentUser } = useAuth();
-    const { createOrder } = useGrocery();
+    const { products, createOrder } = useGrocery();
 
     const [alertConfig, setAlertConfig] = useState({
         isOpen: false,
@@ -39,7 +39,28 @@ export default function CartPage({ onOpenCart, onOpenLogin, onOrderPlaced }) {
             return;
         }
 
-        // 2. Build the standardized order payload for Firebase
+        // 2. Validate Inventory Stock before checkout
+        const insufficientStockItem = cartItems.find(cartItem => {
+            const product = products.find(p => p.id === cartItem.id);
+            return product && cartItem.quantity > product.stock;
+        });
+
+        if (insufficientStockItem) {
+            const matchingProduct = products.find(p => p.id === insufficientStockItem.id);
+            const availableStock = matchingProduct ? matchingProduct.stock : 0;
+
+            setAlertConfig({
+                isOpen: true,
+                type: 'warning',
+                title: 'Stock Limit Exceeded',
+                message: `Sorry! Only ${availableStock} unit(s) of "${insufficientStockItem.name}" are currently in stock. Please adjust your cart quantity.`,
+                primaryBtnText: 'Okay',
+                onPrimaryAction: () => setAlertConfig(prev => ({ ...prev, isOpen: false }))
+            });
+            return;
+        }
+
+        // 3. Build the standardized order payload
         const newOrder = {
             userId: currentUser?.uid || 'guest-id',
             user: {
@@ -58,22 +79,22 @@ export default function CartPage({ onOpenCart, onOpenLogin, onOrderPlaced }) {
         };
 
         try {
-            // 3. Save order to Firebase via GroceryContext
+            // 4. Save order & trigger stock reduction in GroceryContext
             await createOrder(newOrder);
 
-            // 4. Clear the cart
+            // 5. Clear the cart
             clearCart();
 
-            // 5. Show success modal
+            // 6. Show success alert modal
             setAlertConfig({
                 isOpen: true,
                 type: 'success',
                 title: 'Order Placed!',
-                message: 'Your fresh groceries have been ordered successfully.',
+                message: 'Your fresh groceries have been ordered successfully and inventory has been updated.',
                 primaryBtnText: 'View Orders',
                 onPrimaryAction: () => {
                     setAlertConfig(prev => ({ ...prev, isOpen: false }));
-                    if (onOrderPlaced) onOrderPlaced(); // Switches view to user orders
+                    if (onOrderPlaced) onOrderPlaced();
                 }
             });
         } catch (error) {
@@ -108,7 +129,11 @@ export default function CartPage({ onOpenCart, onOpenLogin, onOrderPlaced }) {
                                         <h4 className="cart-item-title">{item.name}</h4>
                                         <p className="cart-item-price">₹{item.price.toFixed(2)} x {item.quantity}</p>
                                     </div>
-                                    <button onClick={() => removeFromCart(item.id)} style={{ color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer' }}>
+                                    <button
+                                        onClick={() => removeFromCart(item.id)}
+                                        style={{ color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer' }}
+                                        title="Remove item"
+                                    >
                                         <Trash2 size={18} />
                                     </button>
                                 </div>

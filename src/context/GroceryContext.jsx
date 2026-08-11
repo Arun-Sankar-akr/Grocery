@@ -37,7 +37,32 @@ export const GroceryProvider = ({ children }) => {
     };
 
     const handleCreateOrder = async (orderData) => {
-        return await createOrder(orderData);
+        // 1. Create the new order
+        const createdOrder = await createOrder(orderData);
+
+        // 2. Reduce stock for each item in the placed order
+        if (orderData.items && orderData.items.length > 0) {
+            const stockUpdates = orderData.items.map(async (orderedItem) => {
+                // Find matching product in state to compute remaining stock
+                const existingProduct = products.find(p => p.id === orderedItem.id);
+
+                if (existingProduct) {
+                    const currentStock = Number(existingProduct.stock) || 0;
+                    const purchasedQty = Number(orderedItem.quantity) || 0;
+                    const newStock = Math.max(0, currentStock - purchasedQty);
+
+                    // Update product stock via API
+                    await saveProduct({
+                        ...existingProduct,
+                        stock: newStock
+                    });
+                }
+            });
+
+            await Promise.all(stockUpdates);
+        }
+
+        return createdOrder;
     };
 
     const handleUpdateOrderStatus = async (orderId, status) => {

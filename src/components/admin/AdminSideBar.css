@@ -2,7 +2,7 @@
 
 .admin-sidebar {
   width: 260px;
-  background: radial-gradient(circle at 0% 0%, #171b2d 0%, #0c0e17 100%);
+  background: #fff;
   border-right: 1px solid rgba(255, 255, 255, 0.08);
   color: #ffffff;
   height: 100vh;
@@ -76,13 +76,13 @@
 }
 
 .admin-nav-item:hover {
-  color: #f8fafc;
+  color: #1e1e1e;
   background: rgba(255, 255, 255, 0.04);
 }
 
 .admin-nav-item.active {
   background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(6, 184, 212, 0.1) 100%);
-  color: #ffffff;
+  color: #000000;
   border-color: rgba(99, 102, 241, 0.4);
   box-shadow: 0 4px 20px rgba(99, 102, 241, 0.15);
 }

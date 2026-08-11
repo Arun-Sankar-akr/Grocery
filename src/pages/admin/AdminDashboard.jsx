@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import AdminSideBar from '../../components/admin/AdminSideBar';
+import AdminSideBar from '../../components/admin/AdminSidebar';
 import ManageProductsPage from './ManageProductsPage';
 import ViewOrdersPage from './ViewOrdersPage';
 import ProductModal from '../../components/admin/ProductModal';

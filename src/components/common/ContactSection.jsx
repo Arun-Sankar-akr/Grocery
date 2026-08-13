@@ -10,7 +10,7 @@ export default function ContactSection() {
                     <span className="section-subtitle">24/7 Customer Support</span>
                     <h2 className="section-title">We're Here To Help You Eat Fresh</h2>
                     <p style={{ color: '#94a3b8', fontSize: '0.9rem' }}>
-                        Have questions regarding delivery times, product sourcing, or order status? Drop us a line anytime.
+                        Farm-Fresh Organic. Delivered in Minutes. Have questions regarding delivery times, product sourcing, or order status? Drop us a line anytime.
                     </p>
 
                     <div className="contact-info-list">

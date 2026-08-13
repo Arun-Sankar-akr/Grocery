@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShoppingBag, Sparkles, User, LogOut, LayoutDashboard, Menu, X } from 'lucide-react';
+import { ShoppingBag, User, LogOut, LayoutDashboard, Menu, X } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 import './Navbar.css';
@@ -15,21 +15,18 @@ export default function Navbar({ onOpenCart, onOpenLogin, onOpenDashboard }) {
       <div className="navbar-container">
         {/* Logo */}
         <a href="#" className="navbar-logo">
-          {/* <div className="logo-icon">
-            {/* <Sparkles size={20} /> 
-          </div> */}
           <span className="logo-text">
-            Fresh<span>Cart</span>
+            Earth<span> Basket</span>
           </span>
         </a>
 
         {/* Navigation Links */}
         <div className={`navbar-links ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
-          <a href="#" className="active" onClick={() => setIsMobileMenuOpen(false)}>Home</a>
+          <a href="/" className="active" onClick={() => setIsMobileMenuOpen(false)}>Home</a>
           <a href="#explore" onClick={() => setIsMobileMenuOpen(false)}>Categories</a>
           <a href="#products" onClick={() => setIsMobileMenuOpen(false)}>Products</a>
           <a href="#contact" onClick={() => setIsMobileMenuOpen(false)}>Support</a>
-          {currentUser && (
+          {/* {currentUser && (
             <button
               onClick={() => {
                 onOpenDashboard();
@@ -39,7 +36,7 @@ export default function Navbar({ onOpenCart, onOpenLogin, onOpenDashboard }) {
             >
               My Dashboard
             </button>
-          )}
+          )} */}
         </div>
 
         {/* Actions Bar */}

@@ -29,7 +29,7 @@ export default function AdminDashboard() {
                     </div>
                     <div className="metric-card">
                         <span className="metric-label">Total Sales Revenue</span>
-                        <div className="metric-value emerald">₹{totalRevenue > 0 ? totalRevenue.toFixed(2) : '1,840.50'}</div>
+                        <div className="metric-value emerald">₹{totalRevenue > 0 ? totalRevenue.toFixed(2) : '0.00'}</div>
                     </div>
                 </div>
 

@@ -11,11 +11,14 @@ import './HomePage.css';
 export default function HomePage({ onOpenCart, onOpenLogin, onOpenDashboard, onViewAllProducts }) {
     const { products } = useGrocery();
 
+    // 1. Show only featured products (or fall back to first 6 if no featured flags exist)
+    const featuredProducts = products?.filter(p => p.featured || p.isFeatured).length > 0
+        ? products.filter(p => p.featured || p.isFeatured)
+        : products?.slice(0, 6);
+
     const handleViewAllClick = (e) => {
         e.preventDefault();
-        if (onViewAllProducts) {
-            onViewAllProducts();
-        }
+        if (onViewAllProducts) onViewAllProducts();
     };
 
     return (
@@ -40,24 +43,18 @@ export default function HomePage({ onOpenCart, onOpenLogin, onOpenDashboard, onV
                         <h2 className="section-main-title">Fresh Daily Pickings</h2>
                         <p className="section-sub-title">Farm-fresh groceries delivered to your door in 15 minutes.</p>
                     </div>
-                    {/* Fixed: Replaced <a href="#"> with an interactive element that triggers onViewAllProducts */}
                     <button
                         onClick={handleViewAllClick}
                         className="view-all-link"
                         type="button"
-                        style={{
-                            background: 'none',
-                            border: 'none',
-                            cursor: 'pointer',
-                            font: 'inherit'
-                        }}
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', font: 'inherit' }}
                     >
                         View All →
                     </button>
                 </div>
 
                 <div className="products-grid">
-                    {products && products.slice(0, 8).map(product => (
+                    {featuredProducts?.map(product => (
                         <ProductCard key={product.id} product={product} />
                     ))}
                 </div>

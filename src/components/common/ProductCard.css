@@ -139,3 +139,53 @@
         height: 36px;
     }
 }
+
+/* --- Quantity Controller Pill --- */
+.qty-control {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f8fafc;
+    border: 1px solid #dbe2ef;
+    border-radius: 12px;
+    padding: 4px 10px;
+    gap: 12px;
+    height: 42px;
+    box-sizing: border-box;
+    user-select: none;
+}
+
+.qty-btn {
+    background: transparent;
+    border: none;
+    color: #334155;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border-radius: 6px;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.qty-btn:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+}
+
+.qty-count {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #0f172a;
+    min-width: 18px;
+    text-align: center;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 520px) {
+    .qty-control {
+        height: 36px;
+        padding: 4px 8px;
+        gap: 8px;
+    }
+}

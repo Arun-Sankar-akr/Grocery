@@ -1,11 +1,29 @@
 import React from 'react';
-import { Plus, Check } from 'lucide-react';
+import { Plus, Minus } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import './ProductCard.css';
 
 export default function ProductCard({ product }) {
-    const { addToCart, cartItems = [] } = useCart();
-    const isInCart = cartItems.some(item => item.id === product.id);
+    const { cartItems = [], addToCart, updateQuantity } = useCart();
+
+    // Find product in cart to get current quantity
+    const cartItem = cartItems.find(item => item.id === product.id);
+    const quantity = cartItem ? cartItem.quantity : 0;
+
+    const handleAdd = (e) => {
+        e.stopPropagation();
+        addToCart(product);
+    };
+
+    const handleIncrement = (e) => {
+        e.stopPropagation();
+        updateQuantity(product.id, 1); // Pass +1 as the delta
+    };
+
+    const handleDecrement = (e) => {
+        e.stopPropagation();
+        updateQuantity(product.id, -1); // Pass -1 as the delta
+    };
 
     return (
         <div className="product-card">
@@ -25,14 +43,36 @@ export default function ProductCard({ product }) {
                     <div className="product-price">₹{Number(product.price || 0).toFixed(2)}</div>
                 </div>
 
-                <button
-                    onClick={() => addToCart(product)}
-                    className={`add-btn ${isInCart ? 'in-cart' : ''}`}
-                    type="button"
-                    title={isInCart ? 'In Cart' : 'Add to Cart'}
-                >
-                    {isInCart ? <Check size={18} /> : <Plus size={18} />}
-                </button>
+                {quantity > 0 ? (
+                    <div className="qty-control" onClick={(e) => e.stopPropagation()}>
+                        <button
+                            type="button"
+                            className="qty-btn"
+                            onClick={handleDecrement}
+                            aria-label="Decrease quantity"
+                        >
+                            <Minus size={16} />
+                        </button>
+                        <span className="qty-count">{quantity}</span>
+                        <button
+                            type="button"
+                            className="qty-btn"
+                            onClick={handleIncrement}
+                            aria-label="Increase quantity"
+                        >
+                            <Plus size={16} />
+                        </button>
+                    </div>
+                ) : (
+                    <button
+                        onClick={handleAdd}
+                        className="add-btn"
+                        type="button"
+                        title="Add to Cart"
+                    >
+                        <Plus size={18} />
+                    </button>
+                )}
             </div>
         </div>
     );

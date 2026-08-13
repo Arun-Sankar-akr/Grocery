@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import DeliverySidebar from '../../components/delivery/DeliverySidebar';
 import DeliveryOrderCard from '../../components/delivery/DeliveryOrderCard';
 import OrderDetailsModal from '../../components/admin/OrderDetailsModal';
-import { Search, Package, Truck, CheckCircle2, BellRing, X, Volume2, LogOut } from 'lucide-react';
+import { Search, Package, Truck, CheckCircle2, BellRing, X, Volume2, LogOut, Wallet } from 'lucide-react';
 import { db } from '../../service/firebase';
 import { collection, onSnapshot, doc, setDoc, getDoc } from 'firebase/firestore';
 import { useAuth } from '../../context/AuthContext';
@@ -18,7 +18,6 @@ export default function DeliveryDashboard() {
     const [newOrderAlert, setNewOrderAlert] = useState(null);
     const [audioEnabled, setAudioEnabled] = useState(false);
 
-    // Dynamic driver info directly from authenticated Firebase User profile
     const currentDriver = {
         id: currentUser?.uid || currentUser?.id || 'DP-000',
         name: currentUser?.name || currentUser?.displayName || 'Delivery Partner'
@@ -69,7 +68,6 @@ export default function DeliveryDashboard() {
         }
     };
 
-    // Live Firestore Real-Time Subscription
     useEffect(() => {
         const ordersRef = collection(db, 'orders');
 
@@ -132,9 +130,6 @@ export default function DeliveryDashboard() {
         activeTab === 'orders' ||
         activeTab === '';
 
-    // =========================================================================
-    // MULTI-DRIVER FILTERING LOGIC
-    // =========================================================================
     const activeOrders = allOrders.filter((o) => {
         if (!o) return false;
         const status = String(o.status || '').toLowerCase().trim();
@@ -151,10 +146,7 @@ export default function DeliveryDashboard() {
 
         if (!isActiveStatus) return false;
 
-        // 1. Unassigned Orders: visible to ALL delivery drivers
         if (!o.assignedToId) return true;
-
-        // 2. Claimed Orders: ONLY visible to the driver who claimed it!
         return String(o.assignedToId) === String(currentDriver.id);
     });
 
@@ -167,6 +159,13 @@ export default function DeliveryDashboard() {
 
         return String(o.assignedToId) === String(currentDriver.id);
     });
+
+    // Compute total earnings from completed deliveries
+    const totalDriverEarnings = completedOrders.reduce((sum, order) => {
+        const fee = order.deliveryFee || 30;
+        const earnings = order.driverEarnings || Math.round((fee * 0.8) + 15);
+        return sum + earnings;
+    }, 0);
 
     const outForDeliveryCount = activeOrders.filter(
         (o) => String(o.status || '').toLowerCase().trim() === 'out for delivery'
@@ -313,7 +312,6 @@ export default function DeliveryDashboard() {
                         </span>
                     </div>
 
-                    {/* Authenticated Delivery Partner Badge & Logout */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                         <div style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>
                             Partner: <span style={{ color: '#059669', fontWeight: 700 }}>{currentDriver.name}</span>
@@ -347,6 +345,29 @@ export default function DeliveryDashboard() {
                         margin: '20px 0 10px 0'
                     }}
                 >
+                    {/* Total Driver Profit Widget */}
+                    <div
+                        style={{
+                            background: '#f0fdf4',
+                            padding: '16px',
+                            borderRadius: '12px',
+                            border: '1px solid #bbf7d0',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '14px'
+                        }}
+                    >
+                        <div style={{ background: '#dcfce7', padding: '10px', borderRadius: '10px', color: '#16a34a' }}>
+                            <Wallet size={22} />
+                        </div>
+                        <div>
+                            <p style={{ margin: 0, fontSize: '0.8rem', color: '#166534', fontWeight: 600 }}>Total Earnings</p>
+                            <h3 style={{ margin: '2px 0 0 0', fontSize: '1.3rem', fontWeight: 800, color: '#14532d' }}>
+                                ₹{totalDriverEarnings}
+                            </h3>
+                        </div>
+                    </div>
+
                     <div
                         style={{
                             background: '#ffffff',

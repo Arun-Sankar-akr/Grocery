@@ -75,7 +75,22 @@
 .shipping-modal-subtitle {
     font-size: 0.82rem;
     color: #64748b;
-    margin: 0 0 20px;
+    margin: 0 0 16px;
+}
+
+/* Banner displaying location detection from cart page */
+.location-detected-banner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 18px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #047857;
 }
 
 .shipping-field {
@@ -90,8 +105,7 @@
     margin-bottom: 6px;
 }
 
-.shipping-field input,
-.shipping-field textarea {
+.shipping-field input {
     width: 100%;
     padding: 10px 12px;
     border: 1.5px solid #cbd5e1;
@@ -103,8 +117,7 @@
     transition: border-color 0.2s ease;
 }
 
-.shipping-field input:focus,
-.shipping-field textarea:focus {
+.shipping-field input:focus {
     border-color: #059669;
 }
 

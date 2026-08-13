@@ -6,7 +6,8 @@ import {
     doc,
     onSnapshot,
     query,
-    orderBy
+    orderBy,
+    serverTimestamp
 } from 'firebase/firestore';
 
 const PRODUCTS_COLLECTION = 'products';
@@ -33,7 +34,7 @@ export function subscribeToProducts(callback) {
 }
 
 /**
- * 2. Live subscription to Orders collection
+ * 2. Live subscription to Orders collection (Used by Delivery Dashboard)
  */
 export function subscribeToOrders(callback) {
     const q = query(collection(db, ORDERS_COLLECTION), orderBy('createdAt', 'desc'));
@@ -104,22 +105,48 @@ export async function deleteProduct(id) {
 }
 
 /**
- * 5. Create Order (Uses exact custom Order ID like ORD-XXXXXX as Document ID)
+ * 5. Create Order (Safely formats Pinned GPS Location, Address, and Shipping Details)
  */
 export async function createOrder(orderData) {
     try {
-        const orderId = String(orderData.id || orderData._id || `ORD-${Math.floor(100000 + Math.random() * 900000)}`);
-        
+        const orderId = String(
+            orderData.id || orderData._id || `ORD-${Math.floor(100000 + Math.random() * 900000)}`
+        );
+
+        // Sanitize coordinates (latitude/longitude from pinned map location)
+        const rawCoords = orderData.coordinates || orderData.shippingDetails?.coordinates || null;
+        const coordinates = rawCoords && rawCoords.latitude && rawCoords.longitude ? {
+            latitude: Number(rawCoords.latitude),
+            longitude: Number(rawCoords.longitude)
+        } : null;
+
+        // Sanitize detected location string/object
+        const detectedLocation = orderData.detectedLocation ||
+            orderData.shippingDetails?.detectedLocation ||
+            orderData.shippingDetails?.address ||
+            'Location Detected on Cart';
+
         const sanitizedOrder = {
             ...orderData,
             id: orderId,
             status: orderData.status || 'Order Placed',
-            createdAt: orderData.createdAt || new Date().toISOString()
+            createdAt: orderData.createdAt || new Date().toISOString(),
+
+            // Explicitly store pinned location fields for Delivery Dashboard consumption
+            coordinates: coordinates,
+            detectedLocation: typeof detectedLocation === 'string' ? detectedLocation : detectedLocation?.address || '',
+            shippingDetails: {
+                ...(orderData.shippingDetails || {}),
+                address: orderData.shippingDetails?.address || (typeof detectedLocation === 'string' ? detectedLocation : ''),
+                mobile: orderData.shippingDetails?.mobile || orderData.user?.mobile || '',
+                name: orderData.shippingDetails?.name || orderData.user?.name || 'Customer',
+                coordinates: coordinates
+            }
         };
 
         const orderRef = doc(db, ORDERS_COLLECTION, orderId);
         await setDoc(orderRef, sanitizedOrder, { merge: true });
-        console.log("Order created/upserted in Firestore with ID:", orderId);
+        console.log("Order created with Pinned Location in Firestore with ID:", orderId);
         return sanitizedOrder;
     } catch (error) {
         console.error("Failed to create order:", error);
@@ -128,7 +155,7 @@ export async function createOrder(orderData) {
 }
 
 /**
- * 6. Update Order Status
+ * 6. Update Order Status (Supports string or object payloads for assignment & status updates)
  */
 export async function updateOrderStatus(orderId, newStatus) {
     try {
@@ -159,6 +186,7 @@ export async function cancelOrder(orderId) {
             status: 'Cancelled',
             updatedAt: new Date().toISOString()
         }, { merge: true });
+        console.log("Order cancelled in Firestore:", orderId);
     } catch (error) {
         console.error("Failed to cancel order:", error);
         throw error;

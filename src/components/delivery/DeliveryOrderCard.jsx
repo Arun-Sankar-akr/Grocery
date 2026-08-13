@@ -1,15 +1,27 @@
 import React, { useState } from 'react';
-import { MapPin, Phone, User, Truck, CheckCircle2 } from 'lucide-react';
+import {
+    MapPin,
+    Phone,
+    User,
+    Truck,
+    CheckCircle2,
+    Navigation2,
+    PhoneCall,
+    Route,
+    Wallet,
+    Compass
+} from 'lucide-react';
 
-export default function DeliveryOrderCard({ 
-    order, 
-    onUpdateStatus, 
-    onViewDetails, 
-    currentDriverId, 
-    currentDriverName 
+export default function DeliveryOrderCard({
+    order = {},
+    onUpdateStatus,
+    onViewDetails,
+    currentDriverId,
+    currentDriverName
 }) {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    // --- BASIC ORDER METRICS ---
     const orderId = String(order.id || order._id || '');
     const status = String(order.status || 'Order Placed').trim();
 
@@ -24,16 +36,67 @@ export default function DeliveryOrderCard({
     const assignedToId = order.assignedToId || null;
     const isAssignedToMe = String(assignedToId) === String(currentDriverId);
 
+    const customerMobile = order.shippingDetails?.mobile || order.user?.mobile || '';
+
+    // --- LOCATION & COORDINATES RESOLUTION ---
+    const rawDetected = order.detectedLocation || order.shippingDetails?.detectedLocation;
+    const locationCoords = order.coordinates || order.shippingDetails?.coordinates || null;
+
+    // Resolve lat/lng supporting flexible key variants (lat/lng vs latitude/longitude)
+    const lat = locationCoords?.latitude || locationCoords?.lat;
+    const lng = locationCoords?.longitude || locationCoords?.lng;
+    const hasCoordinates = Boolean(lat && lng);
+
+    // Resolve actual printable address (ignoring fallback placeholder strings)
+    const rawAddress =
+        (typeof rawDetected === 'string' ? rawDetected : rawDetected?.address) ||
+        order.shippingDetails?.address ||
+        order.address;
+
+    // Only set customerAddress if it's a valid address string
+    const customerAddress = rawAddress && rawAddress !== 'Location Detected on Cart' ? rawAddress : null;
+
+    // Check if valid coordinates or address exist for Google Maps navigation
+    const hasNavigableLocation = hasCoordinates || Boolean(customerAddress);
+
+    // Calculate Driver Profit & Travel distance
+    const distanceKm = order.deliveryDistanceKm || order.breakdown?.distanceKm || 3;
+    const deliveryFee = order.deliveryFee || order.breakdown?.deliveryFee || 30;
+    const driverEarnings = order.driverEarnings || Math.round((deliveryFee * 0.8) + 15);
+
+    // --- NAVIGATION HANDLER ---
+    const handleOpenNavigation = (e) => {
+        e.stopPropagation();
+
+        // 1. Prioritize exact GPS latitude/longitude from cart detection
+        if (hasCoordinates) {
+            window.open(
+                `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`,
+                '_blank'
+            );
+            return;
+        }
+
+        // 2. Fallback to searching exact address query if available
+        if (customerAddress) {
+            const encodedAddress = encodeURIComponent(customerAddress);
+            window.open(`https://www.google.com/maps/search/?api=1&query=${encodedAddress}`, '_blank');
+            return;
+        }
+    };
+
+    // --- STATUS ACTIONS ---
     const handlePickOrder = async (e) => {
         e.stopPropagation();
-        if (isSubmitting) return;
+        if (isSubmitting || !onUpdateStatus) return;
 
         setIsSubmitting(true);
         try {
             await onUpdateStatus(orderId, {
                 status: 'Out for Delivery',
                 assignedTo: currentDriverName,
-                assignedToId: currentDriverId, // Store current driver ID
+                assignedToId: currentDriverId,
+                driverEarnings: driverEarnings,
                 pickedAt: new Date().toISOString()
             });
         } catch (err) {
@@ -45,7 +108,7 @@ export default function DeliveryOrderCard({
 
     const handleMarkDelivered = async (e) => {
         e.stopPropagation();
-        if (isSubmitting) return;
+        if (isSubmitting || !onUpdateStatus) return;
 
         setIsSubmitting(true);
         try {
@@ -71,7 +134,7 @@ export default function DeliveryOrderCard({
                 boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
                 display: 'flex',
                 flexDirection: 'column',
-                justifyContent: 'space-between',
+                justify: 'space-between',
                 gap: '14px'
             }}
         >
@@ -95,23 +158,124 @@ export default function DeliveryOrderCard({
                 </span>
             </div>
 
-            {/* Customer Info */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.85rem', color: '#475569' }}>
+            {/* Distance & Driver Pay Badge */}
+            <div
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justify: 'space-between',
+                    backgroundColor: '#f0fdf4',
+                    border: '1px solid #bbf7d0',
+                    padding: '8px 12px',
+                    borderRadius: '8px'
+                }}
+            >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: '#166534', fontWeight: 600 }}>
+                    <Route size={15} color="#16a34a" />
+                    <span>Travel: <strong>{typeof distanceKm === 'number' ? distanceKm.toFixed(1) : distanceKm} km</strong></span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.85rem', color: '#15803d', fontWeight: 800 }}>
+                    <Wallet size={15} color="#16a34a" />
+                    <span>Earnings: ₹{driverEarnings}</span>
+                </div>
+            </div>
+
+            {/* Customer Info & Location */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.85rem', color: '#475569' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <User size={15} color="#64748b" />
                     <span style={{ fontWeight: 600, color: '#0f172a' }}>
                         {order.shippingDetails?.name || order.user?.name || 'Customer'}
                     </span>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Phone size={15} color="#64748b" />
-                    <span>{order.shippingDetails?.mobile || order.user?.mobile || 'N/A'}</span>
+
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Phone size={15} color="#64748b" />
+                        <span>{customerMobile || 'N/A'}</span>
+                    </div>
+                    {customerMobile && (
+                        <a
+                            href={`tel:${customerMobile}`}
+                            onClick={(e) => e.stopPropagation()}
+                            style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                                padding: '3px 8px',
+                                borderRadius: '6px',
+                                backgroundColor: '#ffffff',
+                                color: '#16a34a',
+                                border: '1px solid #bbf7d0',
+                                fontSize: '0.75rem',
+                                fontWeight: 700,
+                                textDecoration: 'none'
+                            }}
+                        >
+                            <PhoneCall size={12} /> Call
+                        </a>
+                    )}
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <MapPin size={15} color="#64748b" />
-                    <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {order.shippingDetails?.address || 'Address not specified'}
-                    </span>
+
+                {/* Detected Location Highlight Badge */}
+                <div
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        backgroundColor: '#eff6ff',
+                        color: '#1d4ed8',
+                        padding: '4px 8px',
+                        borderRadius: '6px',
+                        fontSize: '0.725rem',
+                        fontWeight: 700,
+                        marginTop: '2px'
+                    }}
+                >
+                    <Compass size={14} color="#2563eb" />
+                    <span>Cart Auto-Detected Location</span>
+                </div>
+
+                {/* Display Location & Navigation Button */}
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, overflow: 'hidden' }}>
+                        <MapPin size={15} color="#059669" style={{ flexShrink: 0 }} />
+                        <span
+                            title={customerAddress || 'Location set on Cart'}
+                            style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 600, color: '#0f172a' }}
+                        >
+                            {customerAddress || 'Location Detected on Cart'}
+                        </span>
+                    </div>
+
+                    {/* NAVIGATE BUTTON WITH DISABLING AND TOOLTIP */}
+                    <button
+                        type="button"
+                        onClick={handleOpenNavigation}
+                        disabled={!hasNavigableLocation}
+                        title={
+                            hasNavigableLocation
+                                ? "Open location in Google Maps"
+                                : "No valid location or coordinates available for navigation"
+                        }
+                        style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            padding: '4px 9px',
+                            borderRadius: '6px',
+                            backgroundColor: hasNavigableLocation ? '#2563eb' : '#cbd5e1',
+                            color: hasNavigableLocation ? '#ffffff' : '#64748b',
+                            border: 'none',
+                            fontSize: '0.75rem',
+                            fontWeight: 700,
+                            cursor: hasNavigableLocation ? 'pointer' : 'not-allowed',
+                            flexShrink: 0,
+                            transition: 'all 0.2s ease'
+                        }}
+                    >
+                        <Navigation2 size={12} /> Navigate
+                    </button>
                 </div>
             </div>
 
@@ -129,24 +293,25 @@ export default function DeliveryOrderCard({
 
             {/* Action Buttons */}
             <div style={{ display: 'flex', gap: '10px', marginTop: '4px' }}>
-                <button
-                    onClick={onViewDetails}
-                    style={{
-                        flex: 1,
-                        padding: '9px',
-                        borderRadius: '8px',
-                        border: '1px solid #cbd5e1',
-                        background: '#ffffff',
-                        color: '#334155',
-                        fontWeight: 600,
-                        fontSize: '0.825rem',
-                        cursor: 'pointer'
-                    }}
-                >
-                    View Details
-                </button>
+                {onViewDetails && (
+                    <button
+                        onClick={onViewDetails}
+                        style={{
+                            flex: 1,
+                            padding: '9px',
+                            borderRadius: '8px',
+                            border: '1px solid #cbd5e1',
+                            background: '#ffffff',
+                            color: '#334155',
+                            fontWeight: 600,
+                            fontSize: '0.825rem',
+                            cursor: 'pointer'
+                        }}
+                    >
+                        View Details
+                    </button>
+                )}
 
-                {/* Unassigned order button */}
                 {isOrderPlaced && !assignedToId && (
                     <button
                         onClick={handlePickOrder}
@@ -156,11 +321,11 @@ export default function DeliveryOrderCard({
                             padding: '9px',
                             borderRadius: '8px',
                             border: 'none',
-                            background: '#059669',
+                            background: isSubmitting ? '#94a3b8' : '#059669',
                             color: '#ffffff',
                             fontWeight: 700,
                             fontSize: '0.825rem',
-                            cursor: 'pointer',
+                            cursor: isSubmitting ? 'not-allowed' : 'pointer',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -171,7 +336,6 @@ export default function DeliveryOrderCard({
                     </button>
                 )}
 
-                {/* Assigned to current driver button */}
                 {isOutForDelivery && isAssignedToMe && (
                     <button
                         onClick={handleMarkDelivered}
@@ -181,11 +345,11 @@ export default function DeliveryOrderCard({
                             padding: '9px',
                             borderRadius: '8px',
                             border: 'none',
-                            background: '#2563eb',
+                            background: isSubmitting ? '#94a3b8' : '#2563eb',
                             color: '#ffffff',
                             fontWeight: 700,
                             fontSize: '0.825rem',
-                            cursor: 'pointer',
+                            cursor: isSubmitting ? 'not-allowed' : 'pointer',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',

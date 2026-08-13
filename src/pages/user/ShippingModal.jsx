@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MapPin, X } from 'lucide-react';
+import { MapPin, X, CheckCircle2 } from 'lucide-react';
 import './ShippingModal.css';
 
 export default function ShippingModal({
@@ -7,13 +7,13 @@ export default function ShippingModal({
     onClose,
     onConfirm,
     cartTotal = 0,
-    initialName = ''
+    initialName = '',
+    locationText = ''
 }) {
     const [shippingDetails, setShippingDetails] = useState({
         name: '',
         mobile: '',
-        address: '',
-        pincode: ''
+        address: ''
     });
 
     useEffect(() => {
@@ -31,7 +31,10 @@ export default function ShippingModal({
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onConfirm(shippingDetails);
+        onConfirm({
+            ...shippingDetails,
+            address: shippingDetails.address.trim() || locationText || 'Location Selected on Cart'
+        });
     };
 
     return (
@@ -43,11 +46,17 @@ export default function ShippingModal({
 
                 <div className="shipping-modal-header">
                     <MapPin size={24} color="#059669" />
-                    <h3>Delivery Details</h3>
+                    <h3>Delivery Contact & Address</h3>
                 </div>
                 <p className="shipping-modal-subtitle">
-                    Please enter your delivery address to complete your order.
+                    Enter your contact info to confirm the order.
                 </p>
+
+                {/* Location Confirmation Notice */}
+                <div className="location-detected-banner">
+                    <CheckCircle2 size={18} color="#059669" />
+                    <span>Selected Location: <strong>{locationText || 'Pinned on Cart Page'}</strong></span>
+                </div>
 
                 <form onSubmit={handleSubmit}>
                     <div className="shipping-field">
@@ -77,28 +86,13 @@ export default function ShippingModal({
                     </div>
 
                     <div className="shipping-field">
-                        <label>Delivery Address</label>
-                        <textarea
-                            name="address"
-                            placeholder="House No., Street Name, Area, Landmark"
-                            rows="3"
-                            value={shippingDetails.address}
-                            onChange={handleInputChange}
-                            required
-                        />
-                    </div>
-
-                    <div className="shipping-field">
-                        <label>Pincode</label>
+                        <label>Flat / House No. / Door Details (Optional)</label>
                         <input
                             type="text"
-                            name="pincode"
-                            placeholder="6-digit Pincode"
-                            pattern="[0-9]{6}"
-                            title="Please enter a valid 6-digit Pincode"
-                            value={shippingDetails.pincode}
+                            name="address"
+                            placeholder="e.g. Door No. 12, Green Apartments"
+                            value={shippingDetails.address}
                             onChange={handleInputChange}
-                            required
                         />
                     </div>
 

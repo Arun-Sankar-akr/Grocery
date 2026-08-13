@@ -1,7 +1,7 @@
 import React from 'react';
 import { LayoutDashboard, ShoppingBag, ShoppingCart, LogOut, Sparkles } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import './AdminSidebar.css';
+import './AdminSideBar.css';
 
 export default function AdminSideBar({ activeTab, setActiveTab }) {
   const { logout } = useAuth();

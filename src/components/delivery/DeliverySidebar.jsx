@@ -1,7 +1,7 @@
 import React from 'react';
 import { Truck, CheckSquare, LogOut, Sparkles } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import '../admin/AdminSidebar.css';
+import '../admin/AdminSideBar.css';
 
 export default function DeliverySidebar({ activeTab, setActiveTab }) {
     const { logout } = useAuth();

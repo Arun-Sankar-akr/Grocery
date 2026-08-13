@@ -6,7 +6,6 @@ import './ProductCard.css';
 export default function ProductCard({ product }) {
     const { cartItems = [], addToCart, updateQuantity } = useCart();
 
-    // Find product in cart to get current quantity
     const cartItem = cartItems.find(item => item.id === product.id);
     const quantity = cartItem ? cartItem.quantity : 0;
 
@@ -17,12 +16,12 @@ export default function ProductCard({ product }) {
 
     const handleIncrement = (e) => {
         e.stopPropagation();
-        updateQuantity(product.id, 1); // Pass +1 as the delta
+        updateQuantity(product.id, 1);
     };
 
     const handleDecrement = (e) => {
         e.stopPropagation();
-        updateQuantity(product.id, -1); // Pass -1 as the delta
+        updateQuantity(product.id, -1);
     };
 
     return (
@@ -51,7 +50,7 @@ export default function ProductCard({ product }) {
                             onClick={handleDecrement}
                             aria-label="Decrease quantity"
                         >
-                            <Minus size={16} />
+                            <Minus size={14} />
                         </button>
                         <span className="qty-count">{quantity}</span>
                         <button
@@ -60,7 +59,7 @@ export default function ProductCard({ product }) {
                             onClick={handleIncrement}
                             aria-label="Increase quantity"
                         >
-                            <Plus size={16} />
+                            <Plus size={14} />
                         </button>
                     </div>
                 ) : (

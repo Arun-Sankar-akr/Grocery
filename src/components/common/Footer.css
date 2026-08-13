@@ -1,7 +1,5 @@
-/* Footer.css - Mobile Responsive */
-
 .footer {
-    background: #020617;
+    background: #0f172a;
     color: #94a3b8;
     padding: 60px 24px 30px;
     border-top: 1px solid #1e293b;
@@ -28,14 +26,15 @@
 }
 
 .footer-brand span {
-    color: var(--primary-color, #10b981);
+    color: #10b981;
 }
 
 .footer-heading {
-    font-size: 1rem;
+    font-size: 0.95rem;
     color: #ffffff;
-    font-weight: 700;
+    font-weight: 800;
     margin-bottom: 16px;
+    letter-spacing: -0.01em;
 }
 
 .footer-links {
@@ -53,7 +52,7 @@
 }
 
 .footer-links a:hover {
-    color: var(--primary-color, #10b981);
+    color: #10b981;
 }
 
 .newsletter-box {
@@ -63,24 +62,33 @@
 }
 
 .newsletter-input {
-    background: #0f172a;
+    background: #1e293b;
     border: 1px solid #334155;
-    padding: 10px;
-    border-radius: var(--radius-sm, 6px);
+    padding: 10px 14px;
+    border-radius: 10px;
     color: #ffffff;
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     flex: 1;
     outline: none;
 }
 
+.newsletter-input:focus {
+    border-color: #10b981;
+}
+
 .newsletter-btn {
-    background: var(--primary-color, #10b981);
+    background: #059669;
     color: #ffffff;
     font-weight: 700;
     padding: 10px 16px;
-    border-radius: var(--radius-sm, 6px);
+    border-radius: 10px;
     border: none;
     cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.newsletter-btn:hover {
+    background: #047857;
 }
 
 .footer-bottom {
@@ -91,7 +99,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.75rem;
+    font-size: 0.78rem;
     color: #64748b;
 }
 

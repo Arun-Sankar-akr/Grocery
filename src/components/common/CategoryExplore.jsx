@@ -6,7 +6,6 @@ import './CategoryExplore.css';
 export default function CategoryExplore({ selectedCategory, onSelectCategory }) {
   const { products } = useGrocery();
 
-  // Calculate live product counts per category dynamically if products are present
   const getCategoryCount = (categoryName, defaultCount) => {
     if (!products || products.length === 0) return defaultCount;
     if (categoryName.toLowerCase() === 'all') return products.length;
@@ -24,9 +23,8 @@ export default function CategoryExplore({ selectedCategory, onSelectCategory }) 
         return (
           <div
             key={cat.id}
-            className={`category-card ₹{isSelected ? 'active' : ''}`}
+            className={`category-card ${isSelected ? 'active' : ''}`}
             onClick={() => onSelectCategory && onSelectCategory(cat.name)}
-            style={{ cursor: 'pointer' }}
           >
             <div className="category-avatar">
               <img src={cat.image} alt={cat.name} />

@@ -1,102 +1,176 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { db } from '../service/firebase';
+import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import {
-    subscribeToProducts,
-    subscribeToOrders,
-    saveProduct,
-    deleteProduct,
-    createOrder,
-    updateOrderStatus,
-    cancelOrder
+    saveProduct as apiSaveProduct,
+    deleteProduct as apiDeleteProduct,
+    createOrder as apiCreateOrder,
+    updateOrderStatus as apiUpdateOrderStatus
 } from '../service/apiService';
 
-const GroceryContext = createContext();
+export const GroceryContext = createContext();
 
 export const GroceryProvider = ({ children }) => {
     const [products, setProducts] = useState([]);
     const [orders, setOrders] = useState([]);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingProduct, setEditingProduct] = useState(null);
+    const [cart, setCart] = useState([]);
+    const [loading, setLoading] = useState(true);
 
+    // 1. Real-time Listener for Products Collection
     useEffect(() => {
-        const unsubscribeProducts = subscribeToProducts(setProducts);
-        const unsubscribeOrders = subscribeToOrders(setOrders);
+        const productsRef = collection(db, 'products');
+        const unsubscribe = onSnapshot(
+            productsRef,
+            (snapshot) => {
+                const liveProducts = [];
+                snapshot.forEach((docSnap) => {
+                    liveProducts.push({
+                        id: docSnap.id,
+                        ...docSnap.data()
+                    });
+                });
+                setProducts(liveProducts);
+                setLoading(false);
+            },
+            (error) => {
+                console.error("Firestore Products Subscription Error:", error);
+                setLoading(false);
+            }
+        );
 
-        return () => {
-            if (unsubscribeProducts) unsubscribeProducts();
-            if (unsubscribeOrders) unsubscribeOrders();
-        };
+        return () => unsubscribe();
     }, []);
 
-    const handleSaveProduct = async (product) => {
-        await saveProduct(product);
-        closeProductModal();
-    };
+    // 2. Real-time Listener for Orders Collection
+    useEffect(() => {
+        const ordersRef = collection(db, 'orders');
+        const q = query(ordersRef, orderBy('createdAt', 'desc'));
 
-    const handleDeleteProduct = async (id) => {
-        await deleteProduct(id);
-    };
-
-    const handleCreateOrder = async (orderData) => {
-        // 1. Create the new order
-        const createdOrder = await createOrder(orderData);
-
-        // 2. Reduce stock for each item in the placed order
-        if (orderData.items && orderData.items.length > 0) {
-            const stockUpdates = orderData.items.map(async (orderedItem) => {
-                // Find matching product in state to compute remaining stock
-                const existingProduct = products.find(p => p.id === orderedItem.id);
-
-                if (existingProduct) {
-                    const currentStock = Number(existingProduct.stock) || 0;
-                    const purchasedQty = Number(orderedItem.quantity) || 0;
-                    const newStock = Math.max(0, currentStock - purchasedQty);
-
-                    // Update product stock via API
-                    await saveProduct({
-                        ...existingProduct,
-                        stock: newStock
+        const unsubscribe = onSnapshot(
+            q,
+            (snapshot) => {
+                const liveOrders = [];
+                snapshot.forEach((docSnap) => {
+                    liveOrders.push({
+                        id: docSnap.id,
+                        ...docSnap.data()
                     });
-                }
-            });
+                });
+                setOrders(liveOrders);
+            },
+            (error) => {
+                console.error("Firestore Orders Subscription Error:", error);
+            }
+        );
 
-            await Promise.all(stockUpdates);
+        return () => unsubscribe();
+    }, []);
+
+    // --- Product Handlers ---
+    const addOrUpdateProduct = async (productData) => {
+        try {
+            await apiSaveProduct(productData);
+        } catch (err) {
+            console.error("Failed to save product:", err);
+            throw err;
         }
-
-        return createdOrder;
     };
 
-    const handleUpdateOrderStatus = async (orderId, status) => {
-        await updateOrderStatus(orderId, status);
+    const removeProduct = async (id) => {
+        try {
+            await apiDeleteProduct(id);
+        } catch (err) {
+            console.error("Failed to delete product:", err);
+            throw err;
+        }
     };
 
-    const handleCancelOrder = async (orderId) => {
-        await cancelOrder(orderId);
+    // --- Order Handlers (Generates EARTH-XXXX ID) ---
+    const placeOrder = async (orderData) => {
+        try {
+            // Generate order ID formatted as EARTH-XXXX (4 random digits)
+            const generatedEarthId = orderData.id || `EARTH-${Math.floor(1000 + Math.random() * 9000)}`;
+
+            const formattedOrder = {
+                ...orderData,
+                id: generatedEarthId,
+                status: orderData.status || 'Order Placed',
+                createdAt: new Date().toISOString()
+            };
+
+            const created = await apiCreateOrder(formattedOrder);
+            setCart([]); // Clear cart upon successful order placement
+            return created || formattedOrder;
+        } catch (err) {
+            console.error("Failed to place order:", err);
+            throw err;
+        }
     };
 
-    const openProductModal = (product = null) => {
-        setEditingProduct(product);
-        setIsModalOpen(true);
+    const updateOrderStatus = async (orderId, newStatus) => {
+        try {
+            await apiUpdateOrderStatus(orderId, newStatus);
+        } catch (err) {
+            console.error("Failed to update status:", err);
+            throw err;
+        }
     };
 
-    const closeProductModal = () => {
-        setEditingProduct(null);
-        setIsModalOpen(false);
+    // --- Cart Handlers ---
+    const addToCart = (product) => {
+        setCart((prevCart) => {
+            const existing = prevCart.find((item) => item.id === product.id);
+            if (existing) {
+                return prevCart.map((item) =>
+                    item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+                );
+            }
+            return [...prevCart, { ...product, quantity: 1 }];
+        });
     };
+
+    const removeFromCart = (productId) => {
+        setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
+    };
+
+    const updateQuantity = (productId, delta) => {
+        setCart((prevCart) =>
+            prevCart
+                .map((item) => {
+                    if (item.id === productId) {
+                        const newQty = item.quantity + delta;
+                        return newQty > 0 ? { ...item, quantity: newQty } : null;
+                    }
+                    return item;
+                })
+                .filter(Boolean)
+        );
+    };
+
+    const clearCart = () => setCart([]);
+
+    const cartTotal = cart.reduce((acc, item) => acc + (Number(item.price) || 0) * item.quantity, 0);
 
     return (
-        <GroceryContext.Provider value={{
-            products,
-            orders,
-            saveProduct: handleSaveProduct,
-            deleteProduct: handleDeleteProduct,
-            createOrder: handleCreateOrder,
-            updateOrderStatus: handleUpdateOrderStatus,
-            cancelOrder: handleCancelOrder,
-            isModalOpen,
-            editingProduct,
-            openProductModal,
-            closeProductModal
-        }}>
+        <GroceryContext.Provider
+            value={{
+                products,
+                orders,
+                cart,
+                loading,
+                cartTotal,
+                addOrUpdateProduct,
+                removeProduct,
+                placeOrder,
+                updateOrderStatus,
+                addToCart,
+                removeFromCart,
+                updateQuantity,
+                clearCart,
+                setOrders,
+                setProducts
+            }}
+        >
             {children}
         </GroceryContext.Provider>
     );

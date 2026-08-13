@@ -1,9 +1,7 @@
-/* AlertModal.css - Mobile Responsive */
-
 .alert-modal-overlay {
     position: fixed;
     inset: 0;
-    background-color: rgba(15, 23, 42, 0.6);
+    background-color: rgba(15, 23, 42, 0.4);
     backdrop-filter: blur(6px);
     z-index: 200;
     display: flex;
@@ -19,15 +17,17 @@
     border-radius: 20px;
     padding: 28px;
     text-align: center;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
-    animation: popIn 0.25s ease-out;
+    box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.15);
+    border: 1px solid #e2e8f0;
+    animation: popIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes popIn {
     from {
         opacity: 0;
-        transform: scale(0.9);
+        transform: scale(0.92);
     }
+
     to {
         opacity: 1;
         transform: scale(1);
@@ -45,17 +45,19 @@
 }
 
 .alert-icon-wrapper.warning {
-    background-color: #fef3c7;
+    background-color: #fffbeb;
     color: #d97706;
+    border: 1px solid #fde68a;
 }
 
 .alert-icon-wrapper.success {
-    background-color: #d1fae5;
+    background-color: #ecfdf5;
     color: #059669;
+    border: 1px solid #a7f3d0;
 }
 
 .alert-modal-title {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 1.3rem;
     font-weight: 800;
     color: #0f172a;
@@ -63,7 +65,7 @@
 }
 
 .alert-modal-message {
-    font-size: 0.85rem;
+    font-size: 0.88rem;
     color: #64748b;
     margin-bottom: 24px;
     line-height: 1.5;
@@ -80,8 +82,8 @@
     color: #ffffff;
     font-weight: 700;
     padding: 12px;
-    border-radius: 10px;
-    font-size: 0.85rem;
+    border-radius: 12px;
+    font-size: 0.88rem;
     border: none;
     cursor: pointer;
     transition: background 0.2s ease;
@@ -93,14 +95,19 @@
 
 .alert-btn-secondary {
     flex: 1;
-    background-color: #f1f5f9;
-    color: #475569;
-    font-weight: 600;
+    background-color: #f8fafc;
+    color: #64748b;
+    font-weight: 700;
     padding: 12px;
-    border-radius: 10px;
-    font-size: 0.85rem;
-    border: none;
+    border-radius: 12px;
+    font-size: 0.88rem;
+    border: 1px solid #e2e8f0;
     cursor: pointer;
+}
+
+.alert-btn-secondary:hover {
+    background-color: #f1f5f9;
+    color: #0f172a;
 }
 
 @media (max-width: 480px) {
@@ -109,6 +116,6 @@
     }
 
     .alert-actions {
-        flex-direction: column; /* Stacks action buttons on mobile */
+        flex-direction: column;
     }
 }

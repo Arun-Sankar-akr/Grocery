@@ -8,7 +8,7 @@ export default function CustomAlertModal({ isOpen, type = 'warning', title, mess
     return (
         <div className="alert-modal-overlay" onClick={onCancel}>
             <div className="alert-modal-card" onClick={(e) => e.stopPropagation()}>
-                <div className={`alert-icon-wrapper ₹{type}`}>
+                <div className={`alert-icon-wrapper ${type}`}>
                     {type === 'warning' ? <LogIn size={28} /> : <CheckCircle2 size={28} />}
                 </div>
 

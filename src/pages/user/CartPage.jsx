@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Navbar from '../../components/common/Navbar';
 import Footer from '../../components/common/Footer';
 import CustomAlertModal from '../../components/common/CustomAlertModal';
+import ShippingModal from './ShippingModal';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 import { useGrocery } from '../../context/GroceryContext';
@@ -11,8 +12,11 @@ import './CartPage.css';
 export default function CartPage({ onOpenCart, onOpenLogin, onOrderPlaced }) {
     const { cartItems, removeFromCart, cartTotal, clearCart } = useCart();
     const { currentUser } = useAuth();
-    const { products, createOrder } = useGrocery();
+    const { products, createOrder, placeOrder } = useGrocery();
 
+    const saveOrderToContext = createOrder || placeOrder;
+
+    const [isShippingModalOpen, setIsShippingModalOpen] = useState(false);
     const [alertConfig, setAlertConfig] = useState({
         isOpen: false,
         type: 'warning',
@@ -22,8 +26,7 @@ export default function CartPage({ onOpenCart, onOpenLogin, onOrderPlaced }) {
         onPrimaryAction: null
     });
 
-    const handlePlaceOrder = async () => {
-        // 1. Check if user is logged in
+    const handleInitiateOrder = () => {
         if (!currentUser) {
             setAlertConfig({
                 isOpen: true,
@@ -39,7 +42,6 @@ export default function CartPage({ onOpenCart, onOpenLogin, onOrderPlaced }) {
             return;
         }
 
-        // 2. Validate Inventory Stock before checkout
         const insufficientStockItem = cartItems.find(cartItem => {
             const product = products.find(p => p.id === cartItem.id);
             return product && cartItem.quantity > product.stock;
@@ -53,20 +55,25 @@ export default function CartPage({ onOpenCart, onOpenLogin, onOrderPlaced }) {
                 isOpen: true,
                 type: 'warning',
                 title: 'Stock Limit Exceeded',
-                message: `Sorry! Only ${availableStock} unit(s) of "${insufficientStockItem.name}" are currently in stock. Please adjust your cart quantity.`,
+                message: `Sorry! Only ${availableStock} unit(s) of "${insufficientStockItem.name}" are currently in stock.`,
                 primaryBtnText: 'Okay',
                 onPrimaryAction: () => setAlertConfig(prev => ({ ...prev, isOpen: false }))
             });
             return;
         }
 
-        // 3. Build the standardized order payload
+        setIsShippingModalOpen(true);
+    };
+
+    const handleConfirmOrder = async (shippingDetails) => {
         const newOrder = {
+            id: `ORD-${Math.floor(100000 + Math.random() * 900000)}`,
             userId: currentUser?.uid || 'guest-id',
             user: {
-                name: currentUser?.name || 'Customer',
+                name: shippingDetails.name,
                 email: currentUser?.email || ''
             },
+            shippingDetails,
             items: cartItems.map(item => ({
                 id: item.id,
                 name: item.name,
@@ -79,34 +86,27 @@ export default function CartPage({ onOpenCart, onOpenLogin, onOrderPlaced }) {
         };
 
         try {
-            // 4. Save order & trigger stock reduction in GroceryContext
-            await createOrder(newOrder);
+            setIsShippingModalOpen(false);
 
-            // 5. Clear the cart
+            // 1. Save directly into Context (Handles local state & API)
+            if (saveOrderToContext) {
+                await saveOrderToContext(newOrder);
+            }
+
+            // 2. Backup to unified LocalStorage key
+            const existing = JSON.parse(localStorage.getItem('earthbasket_orders') || '[]');
+            const updated = [newOrder, ...existing.filter(o => o.id !== newOrder.id)];
+            localStorage.setItem('earthbasket_orders', JSON.stringify(updated));
+
             clearCart();
 
-            // 6. Show success alert modal
-            setAlertConfig({
-                isOpen: true,
-                type: 'success',
-                title: 'Order Placed!',
-                message: 'Your fresh groceries have been ordered successfully and inventory has been updated.',
-                primaryBtnText: 'View Orders',
-                onPrimaryAction: () => {
-                    setAlertConfig(prev => ({ ...prev, isOpen: false }));
-                    if (onOrderPlaced) onOrderPlaced();
-                }
-            });
+            if (onOrderPlaced) {
+                onOrderPlaced();
+            } else {
+                window.location.href = '/orders';
+            }
         } catch (error) {
-            console.error("Failed to save order to database:", error);
-            setAlertConfig({
-                isOpen: true,
-                type: 'error',
-                title: 'Order Failed',
-                message: 'Something went wrong while placing your order. Please try again.',
-                primaryBtnText: 'Try Again',
-                onPrimaryAction: () => setAlertConfig(prev => ({ ...prev, isOpen: false }))
-            });
+            console.error("Failed to save order:", error);
         }
     };
 
@@ -127,12 +127,11 @@ export default function CartPage({ onOpenCart, onOpenLogin, onOrderPlaced }) {
                                     <img src={item.image} alt={item.name} className="cart-item-img" />
                                     <div className="cart-item-details">
                                         <h4 className="cart-item-title">{item.name}</h4>
-                                        <p className="cart-item-price">₹{item.price.toFixed(2)} x {item.quantity}</p>
+                                        <p className="cart-item-price">₹{Number(item.price).toFixed(2)} x {item.quantity}</p>
                                     </div>
                                     <button
                                         onClick={() => removeFromCart(item.id)}
                                         style={{ color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer' }}
-                                        title="Remove item"
                                     >
                                         <Trash2 size={18} />
                                     </button>
@@ -144,7 +143,7 @@ export default function CartPage({ onOpenCart, onOpenLogin, onOrderPlaced }) {
                             <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '16px' }}>Order Summary</h3>
                             <div className="summary-row">
                                 <span>Subtotal</span>
-                                <span>₹{cartTotal.toFixed(2)}</span>
+                                <span>₹{Number(cartTotal).toFixed(2)}</span>
                             </div>
                             <div className="summary-row">
                                 <span>Delivery Fee</span>
@@ -153,9 +152,9 @@ export default function CartPage({ onOpenCart, onOpenLogin, onOrderPlaced }) {
                             <hr style={{ border: 'none', borderTop: '1px solid #e2e8f0', margin: '16px 0' }} />
                             <div className="summary-row" style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0f172a' }}>
                                 <span>Total</span>
-                                <span>₹{cartTotal.toFixed(2)}</span>
+                                <span>₹{Number(cartTotal).toFixed(2)}</span>
                             </div>
-                            <button onClick={handlePlaceOrder} className="place-order-btn" style={{ border: 'none', cursor: 'pointer' }}>
+                            <button onClick={handleInitiateOrder} className="place-order-btn">
                                 Place Order
                             </button>
                         </div>
@@ -163,9 +162,16 @@ export default function CartPage({ onOpenCart, onOpenLogin, onOrderPlaced }) {
                 )}
             </div>
 
+            <ShippingModal
+                isOpen={isShippingModalOpen}
+                onClose={() => setIsShippingModalOpen(false)}
+                onConfirm={handleConfirmOrder}
+                cartTotal={cartTotal}
+                initialName={currentUser?.name || ''}
+            />
+
             <Footer />
 
-            {/* Custom Alert Modal */}
             <CustomAlertModal
                 isOpen={alertConfig.isOpen}
                 type={alertConfig.type}

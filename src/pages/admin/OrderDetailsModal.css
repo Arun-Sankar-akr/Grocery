@@ -1,35 +1,35 @@
-/* OrderDetailsModal.css - Light Theme Details Dialog (Mobile Responsive) */
+/* OrderDetailsModal.css - Premium Light Order Details Modal */
 
 .order-modal-overlay {
     position: fixed;
     inset: 0;
-    background-color: rgba(15, 23, 42, 0.4);
-    backdrop-filter: blur(6px);
+    background-color: rgba(15, 23, 42, 0.35);
+    backdrop-filter: blur(8px);
     z-index: 150;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 24px;
 }
 
 .order-modal-card {
     background-color: #ffffff;
     width: 100%;
-    max-width: 560px;
-    max-height: 90vh;
+    max-width: 580px;
+    max-height: 88vh;
     overflow-y: auto;
-    border-radius: 20px;
-    padding: 28px;
+    border-radius: 24px;
+    padding: 32px;
     position: relative;
-    box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.15);
+    box-shadow: 0 24px 48px -12px rgba(15, 23, 42, 0.12);
     border: 1px solid #e2e8f0;
-    animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: modalSlidePop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes modalPop {
+@keyframes modalSlidePop {
     from {
         opacity: 0;
-        transform: scale(0.95) translateY(10px);
+        transform: scale(0.96) translateY(12px);
     }
 
     to {
@@ -42,13 +42,13 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    padding-bottom: 16px;
+    padding-bottom: 20px;
     border-bottom: 1px solid #f1f5f9;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 }
 
 .order-modal-title {
-    font-size: 1.25rem;
+    font-size: 1.35rem;
     font-weight: 800;
     color: #0f172a;
 }
@@ -58,8 +58,8 @@
     border: 1px solid #e2e8f0;
     color: #64748b;
     border-radius: 50%;
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -76,21 +76,23 @@
 .order-info-section {
     background: #f8fafc;
     border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 14px 16px;
-    margin-bottom: 20px;
-    font-size: 0.85rem;
+    border-radius: 16px;
+    padding: 18px 20px;
+    margin-bottom: 24px;
+    font-size: 0.88rem;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    gap: 14px;
 }
 
 .order-info-item label {
     display: block;
     font-size: 0.72rem;
     color: #64748b;
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 2px;
 }
 
 .order-info-item span {
@@ -100,36 +102,36 @@
 }
 
 .order-items-title {
-    font-size: 0.9rem;
-    font-weight: 700;
+    font-size: 0.95rem;
+    font-weight: 800;
     color: #0f172a;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
 }
 
 .order-items-list {
-    max-height: 260px;
+    max-height: 280px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 12px;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
     padding-right: 4px;
 }
 
 .order-item-row {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 10px;
-    border-radius: 12px;
+    gap: 14px;
+    padding: 12px 14px;
+    border-radius: 14px;
     border: 1px solid #f1f5f9;
     background-color: #ffffff;
 }
 
 .order-item-img {
-    width: 48px;
-    height: 48px;
-    border-radius: 8px;
+    width: 52px;
+    height: 52px;
+    border-radius: 10px;
     object-fit: cover;
     border: 1px solid #e2e8f0;
     flex-shrink: 0;
@@ -140,19 +142,20 @@
 }
 
 .order-item-name {
-    font-size: 0.88rem;
+    font-size: 0.9rem;
     font-weight: 700;
     color: #0f172a;
 }
 
 .order-item-qty {
-    font-size: 0.78rem;
+    font-size: 0.8rem;
     color: #64748b;
+    margin-top: 2px;
 }
 
 .order-item-price {
-    font-weight: 700;
-    font-size: 0.9rem;
+    font-weight: 800;
+    font-size: 0.95rem;
     color: #0f172a;
 }
 
@@ -160,30 +163,31 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-top: 16px;
+    padding-top: 20px;
     border-top: 1px solid #f1f5f9;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #64748b;
 }
 
 .order-modal-total {
-    font-size: 1.1rem;
+    font-size: 1.25rem;
     font-weight: 800;
-    color: #0f172a;
+    color: #059669;
 }
 
-/* --- Mobile Responsiveness --- */
 @media (max-width: 520px) {
     .order-modal-overlay {
-        padding: 12px;
+        padding: 16px;
     }
 
     .order-modal-card {
-        padding: 18px 14px;
-        border-radius: 16px;
+        padding: 20px 16px;
+        border-radius: 20px;
     }
 
     .order-info-section {
         grid-template-columns: 1fr;
-        /* Stacks details vertically */
-        gap: 8px;
+        gap: 10px;
     }
 }

@@ -28,8 +28,8 @@ export default function ProductTable() {
                                         <span>{item.name}</span>
                                     </div>
                                 </td>
-                                <td style={{ color: '#94a3b8' }}>{item.category}</td>
-                                <td style={{ fontWeight: 700, color: '#f8fafc' }}>
+                                <td style={{ color: '#64748b', fontWeight: 500 }}>{item.category}</td>
+                                <td style={{ fontWeight: 800, color: '#0f172a' }}>
                                     ₹{typeof item.price === 'number' ? item.price.toFixed(2) : item.price}
                                 </td>
                                 <td>
@@ -57,7 +57,7 @@ export default function ProductTable() {
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="5" style={{ textAlign: 'center', padding: '32px', color: '#64748b' }}>
+                            <td colSpan="5" style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>
                                 No products available.
                             </td>
                         </tr>

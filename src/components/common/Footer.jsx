@@ -9,7 +9,7 @@ export default function Footer() {
                     <div className="footer-brand">
                         Earth<span>Basket</span>
                     </div>
-                    <p style={{ color: '#64748b', fontSize: '0.85rem', marginBottom: '16px' }}>
+                    <p style={{ color: '#94a3b8', fontSize: '0.85rem', marginBottom: '16px', lineHeight: '1.5' }}>
                         Farm-Fresh Organic. Delivered in Minutes.
                     </p>
                 </div>
@@ -36,7 +36,7 @@ export default function Footer() {
 
                 <div>
                     <h4 className="footer-heading">Newsletter</h4>
-                    <p style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                    <p style={{ fontSize: '0.8rem', color: '#94a3b8', lineHeight: '1.5' }}>
                         Subscribe to get updates on daily discounts and organic produce arrivals.
                     </p>
                     <div className="newsletter-box">

@@ -1,4 +1,3 @@
-// src/pages/user/MyOrdersPage.jsx
 import React from 'react';
 import { useGrocery } from '../../context/GroceryContext';
 import { useAuth } from '../../context/AuthContext';
@@ -6,12 +5,11 @@ import OrderStatusBadge from '../../components/admin/OrderStatusBadge';
 import './MyOrdersPage.css';
 
 export default function MyOrdersPage({ onSelectOrder }) {
-    const { orders, cancelOrder } = useGrocery();
+    const { orders = [], cancelOrder } = useGrocery();
     const { currentUser } = useAuth();
 
-    // Filter orders for the logged-in user
     const userOrders = orders.filter((ord) => {
-        if (!currentUser) return true; // fallback for guest testing
+        if (!currentUser) return true; // Show all for guest testing
         const ordUserId = ord.userId || ord.user?.uid;
         const ordEmail = ord.userEmail || ord.customerEmail || ord.user?.email;
         return ordUserId === currentUser.uid || ordEmail === currentUser.email;
@@ -33,7 +31,7 @@ export default function MyOrdersPage({ onSelectOrder }) {
                         <div key={ord.id} className="order-history-card">
                             <div className="order-card-header">
                                 <div>
-                                    <span style={{ fontWeight: 800 }}>#{ord.id.slice(0, 8)}</span>
+                                    <span style={{ fontWeight: 800 }}>#{String(ord.id).slice(0, 8)}</span>
                                     <span style={{ fontSize: '0.8rem', color: '#64748b', marginLeft: '12px' }}>
                                         {new Date(ord.createdAt || Date.now()).toLocaleDateString()}
                                     </span>

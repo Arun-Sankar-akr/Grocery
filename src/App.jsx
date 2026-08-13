@@ -5,6 +5,7 @@ import { GroceryProvider } from './context/GroceryContext';
 
 import HomePage from './pages/common/HomePage';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import DeliveryDashboard from './pages/delivery/DeliveryDashboard'; // Import Delivery Dashboard
 import UserDashboard from './pages/user/UserDashboard';
 import LoginPage from './pages/common/LoginPage';
 import CartDrawer from './components/user/CartDrawer';
@@ -15,20 +16,25 @@ import OrderTrackingPage from './pages/user/OrderTrackingPage';
 function AppContent() {
   const { currentUser } = useAuth();
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [currentPage, setCurrentPage] = useState('home'); // 'home', 'login', 'cart', 'orders', 'all-products', 'track-order'
+  const [currentPage, setCurrentPage] = useState('home');
   const [selectedOrder, setSelectedOrder] = useState(null);
 
-  // 1. If an Admin is logged in, route directly to Admin Dashboard
+  // 1. Admin Role Route
   if (currentUser?.role === 'admin') {
     return <AdminDashboard />;
   }
 
-  // 2. Login Page
+  // 2. Delivery Partner Role Route
+  if (currentUser?.role === 'delivery' || currentUser?.role === 'delivery-partner') {
+    return <DeliveryDashboard />;
+  }
+
+  // 3. Login Page
   if (currentPage === 'login') {
     return <LoginPage onLoginSuccess={() => setCurrentPage('home')} />;
   }
 
-  // 3. Cart / Checkout Page
+  // 4. Cart / Checkout Page
   if (currentPage === 'cart') {
     return (
       <CartPage
@@ -39,7 +45,7 @@ function AppContent() {
     );
   }
 
-  // 4. User Dashboard / Orders Page
+  // 5. User Dashboard / Orders Page
   if (currentPage === 'orders') {
     return (
       <UserDashboard
@@ -54,7 +60,7 @@ function AppContent() {
     );
   }
 
-  // 5. Track Order Page
+  // 6. Track Order Page
   if (currentPage === 'track-order') {
     return (
       <>
@@ -73,11 +79,14 @@ function AppContent() {
     );
   }
 
-  // 6. All Products Page (View All Route)
+  // 7. All Products Page
   if (currentPage === 'all-products') {
     return (
       <>
-        <AllProductsPage onBackToHome={() => setCurrentPage('home')} />
+        <AllProductsPage
+          onBackToHome={() => setCurrentPage('home')}
+          onOpenCart={() => setIsCartOpen(true)}
+        />
         <CartDrawer
           isOpen={isCartOpen}
           onClose={() => setIsCartOpen(false)}
@@ -88,7 +97,7 @@ function AppContent() {
     );
   }
 
-  // 7. Default Customer Homepage
+  // 8. Default Customer Homepage
   return (
     <>
       <HomePage

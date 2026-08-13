@@ -1,56 +1,85 @@
 import React from 'react';
-import { ArrowRight, ShieldCheck, Clock, Truck } from 'lucide-react';
+import { ArrowRight, Clock, ShieldCheck, Sparkles, ShoppingBag } from 'lucide-react';
 import './HeroBanner.css';
 
 export default function HeroBanner() {
     return (
-        <section className="hero-section">
-            <div className="hero-glow-1" />
-            <div className="hero-glow-2" />
+        <section className="hero-banner-section">
+            <div className="hero-ambient-glow" />
 
-            <div className="hero-container">
-                <div>
-                    <div className="hero-tag">
-                        <Clock size={14} /> 15-Minute Express Grocery Delivery
+            <div className="hero-banner-container">
+                {/* Left Side: Copy, CTAs, Quick Categories */}
+                <div className="hero-content-wrapper">
+                    <div className="hero-status-pill">
+                        <Sparkles size={14} /> 100% Certified Organic Harvest
                     </div>
 
-                    <h1 className="hero-title">
-                        Farm Fresh Organic Essentials <br />
-                        <span className="hero-title-highlight">Delivered Daily.</span>
+                    <h1 className="hero-title-text">
+                        Farm Fresh Essentials <br />
+                        <span className="highlight">Delivered in 15 Mins.</span>
                     </h1>
 
-                    <p className="hero-description">
-                        Handpicked organic vegetables, premium fruits, and dairy delivered straight from local artisan farms to your kitchen doorstep.
+                    <p className="hero-sub-text">
+                        Handpicked organic vegetables, fresh fruits, and artisan dairy delivered straight from local partner farms to your door.
                     </p>
 
-                    <div className="hero-buttons">
-                        <a href="#products" className="btn-primary">
-                            Shop Fresh Products <ArrowRight size={18} />
+                    <div className="hero-cta-group">
+                        <a href="#products" className="btn-emerald-primary">
+                            Explore Fresh Products <ArrowRight size={18} />
                         </a>
-                        <a href="#explore" className="btn-secondary">
-                            Explore Categories
+                        <a href="#categories" className="btn-outline-secondary">
+                            View Categories
                         </a>
                     </div>
 
-                    <div className="hero-badges">
-                        <div className="badge-item"><ShieldCheck size={16} color="#34d399" /> 100% Organic</div>
-                        <div className="badge-item"><Truck size={16} color="#34d399" /> Free Shipping</div>
-                        <div className="badge-item"><Clock size={16} color="#34d399" /> Fresh Guarantee</div>
+                    {/* Interactive Category Chips */}
+                    <div className="hero-categories-grid">
+                        <a href="#products" className="hero-cat-chip">
+                            <span>🥬</span> Organic Greens
+                        </a>
+                        <a href="#products" className="hero-cat-chip">
+                            <span>🍎</span> Fresh Fruits
+                        </a>
+                        <a href="#products" className="hero-cat-chip">
+                            <span>🥛</span> Farm Dairy
+                        </a>
+                        <a href="#products" className="hero-cat-chip">
+                            <span>🥖</span> Bakery
+                        </a>
                     </div>
                 </div>
 
-                <div className="hero-image-wrapper">
-                    <img
-                        src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=800"
-                        alt="Fresh Groceries"
-                        className="hero-img"
-                    />
-                    <div className="hero-floating-card">
-                        <div>
-                            <p style={{ fontSize: '0.7rem', color: 'var(--primary-dark)', fontWeight: 700 }}>TODAY'S SPECIAL</p>
-                            <h4 style={{ fontSize: '1rem', fontWeight: 700 }}>Organic Fruit Baskets</h4>
+                {/* Right Side: Media Showcase & Floating Stat Cards */}
+                <div className="hero-media-wrapper">
+                    <div className="media-card-main">
+                        <img
+                            src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=800"
+                            alt="Fresh Organic Groceries"
+                            className="media-card-img"
+                        />
+                    </div>
+
+                    {/* Top Left Floating Speed Badge */}
+                    <div className="floating-stat-card">
+                        <div className="stat-icon-box">
+                            <Clock size={20} />
                         </div>
-                        <span className="deal-discount">20% OFF</span>
+                        <div>
+                            <span style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: 800, textTransform: 'uppercase' }}>Express Delivery</span>
+                            <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#0f172a', margin: '2px 0 0' }}>~12 Mins Avg.</h4>
+                        </div>
+                    </div>
+
+                    {/* Bottom Right Floating Offer Card */}
+                    <div className="floating-deal-card">
+                        <div className="stat-icon-box" style={{ background: '#fef3c7', color: '#d97706' }}>
+                            <ShoppingBag size={20} />
+                        </div>
+                        <div>
+                            <span style={{ fontSize: '0.68rem', color: '#d97706', fontWeight: 800, textTransform: 'uppercase' }}>Special Offer</span>
+                            <h4 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#0f172a', margin: '2px 0 0' }}>Organic Fruit Baskets</h4>
+                        </div>
+                        <span className="deal-tag-badge">20% OFF</span>
                     </div>
                 </div>
             </div>

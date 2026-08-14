@@ -11,6 +11,11 @@
     box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.03);
 }
 
+.logo {
+    width: 55px;
+    height: 55px;
+}
+
 .navbar-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -20,10 +25,15 @@
     justify-content: space-between;
 }
 
+.logos {
+    display: flex;
+    gap: 10px;
+}
+
 .navbar-logo {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 5px;
     text-decoration: none;
 }
 

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ShoppingBag, User, LogOut, LayoutDashboard, Menu, X } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
+import logo from "../../../public/logo.png"
 import './Navbar.css';
 
 export default function Navbar({ onOpenCart, onOpenLogin, onOpenDashboard }) {
@@ -13,12 +14,14 @@ export default function Navbar({ onOpenCart, onOpenLogin, onOpenDashboard }) {
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        {/* Logo */}
-        <a href="#" className="navbar-logo">
-          <span className="logo-text">
-            Earth<span>Basket</span>
-          </span>
-        </a>
+        <div className="logos">
+          <img src={logo} className='logo' />
+          <a href="#" className="navbar-logo">
+            <span className="logo-text">
+              Earth<span>Basket</span>
+            </span>
+          </a>
+        </div>
 
         {/* Navigation Links */}
         <div className={`navbar-links ${isMobileMenuOpen ? 'mobile-open' : ''}`}>

@@ -2,7 +2,7 @@ import React from 'react';
 import Navbar from '../../components/common/Navbar';
 import Footer from '../../components/common/Footer';
 import OrderTimeline from '../../components/user/OrderTimeline';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Clock } from 'lucide-react';
 import './OrderTrackingPage.css';
 
 export default function OrderTrackingPage({ order, onOpenCart, onBackToOrders }) {
@@ -15,31 +15,20 @@ export default function OrderTrackingPage({ order, onOpenCart, onBackToOrders })
             <div className="tracking-container" style={{ flex: 1 }}>
                 <button
                     onClick={onBackToOrders}
-                    style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        background: '#ffffff',
-                        border: '1px solid #cbd5e1',
-                        color: '#475569',
-                        padding: '8px 16px',
-                        borderRadius: '10px',
-                        cursor: 'pointer',
-                        fontWeight: 600,
-                        fontSize: '0.85rem',
-                        marginBottom: '20px'
-                    }}
+                    className="back-to-orders-btn"
                     type="button"
                 >
                     <ArrowLeft size={16} /> Back to My Orders
                 </button>
 
-                <h1 style={{ fontSize: '1.8rem', fontWeight: 800, color: '#0f172a' }}>
-                    Track Order #{orderId}
-                </h1>
-                <p style={{ color: '#64748b', marginBottom: '24px', fontSize: '0.9rem' }}>
-                    Status: <strong style={{ color: '#059669' }}>{trackingOrder.status || 'Order Placed'}</strong>
-                </p>
+                <div className="tracking-header">
+                    <h1 className="tracking-title">
+                        Track Order #{orderId}
+                    </h1>
+                    <p className="tracking-subtitle">
+                        Status: <strong style={{ color: '#059669' }}>{trackingOrder.status || 'Order Placed'}</strong>
+                    </p>
+                </div>
 
                 <div className="tracking-card">
                     <OrderTimeline currentStatus={trackingOrder.status || 'Order Placed'} />

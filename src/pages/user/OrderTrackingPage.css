@@ -1,28 +1,65 @@
-/* OrderTrackingPage.css - Mobile Responsive Card */
-
 .tracking-container {
-    max-width: 800px;
-    margin: 40px auto;
-    padding: 0 20px;
+  max-width: 800px;
+  margin: 32px auto;
+  padding: 0 20px;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.tracking-header {
+  margin-bottom: 24px;
+}
+
+.back-to-orders-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin-bottom: 20px;
+  transition: all 0.2s ease;
+}
+
+.back-to-orders-btn:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+
+.tracking-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.02em;
+}
+
+.tracking-subtitle {
+  color: #64748b;
+  margin: 0;
+  font-size: 0.9rem;
 }
 
 .tracking-card {
-    background-color: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 20px;
-    padding: 32px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
 }
 
-/* --- Mobile Responsiveness --- */
 @media (max-width: 768px) {
-    .tracking-container {
-        margin: 20px auto;
-        padding: 0 16px;
-    }
+  .tracking-container {
+    margin: 16px auto;
+    padding: 0 16px;
+  }
 
-    .tracking-card {
-        padding: 20px 14px;
-        border-radius: 16px;
-    }
+  .tracking-card {
+    padding: 20px 16px;
+    border-radius: 16px;
+  }
 }

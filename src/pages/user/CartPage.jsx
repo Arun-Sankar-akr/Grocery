@@ -6,14 +6,13 @@ import ShippingModal from './ShippingModal';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 import { useGrocery } from '../../context/GroceryContext';
-import { Trash2, MapPin, Truck, RefreshCw, Search, Layers, Globe, Receipt, Info } from 'lucide-react';
+import { Trash2, MapPin, Truck, RefreshCw, Search, Layers, Globe, Receipt, Info, ShoppingBag } from 'lucide-react';
 
 import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import './CartPage.css';
 
-// Leaflet default icon fix for React bundling
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
     iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
@@ -24,11 +23,11 @@ L.Icon.Default.mergeOptions({
 const TILE_LAYERS = {
     streets: {
         url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        attribution: '&copy; OpenStreetMap'
     },
     satellite: {
         url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+        attribution: 'Tiles &copy; Esri'
     }
 };
 
@@ -42,36 +41,25 @@ const LOCALITY_PRESETS = [
     { name: 'Golden Rock', lat: 10.7850, lng: 78.7180 }
 ];
 
-// Fee Configuration
 const PLATFORM_FEE = 6;
 
-// Delivery Fee Calculation based on distance
 const calculateSwiggyDeliveryFee = (km) => {
-    if (km <= 3) {
-        return 30; // Base rate for up to 3 km
-    } else if (km <= 6) {
-        return 30 + Math.ceil(km - 3) * 10; // ₹10/km for 3-6 km
-    } else if (km <= 10) {
-        return 60 + Math.ceil(km - 6) * 15; // ₹15/km for 6-10 km
-    } else {
-        return 120 + Math.ceil(km - 10) * 20; // Long distance tier (>10 km)
-    }
+    if (km <= 3) return 30;
+    if (km <= 6) return 30 + Math.ceil(km - 3) * 10;
+    if (km <= 10) return 60 + Math.ceil(km - 6) * 15;
+    return 120 + Math.ceil(km - 10) * 20;
 };
 
-// Accurate Haversine Distance Calculation
 const calculateHaversineDistance = (coords1, coords2) => {
     const toRad = (value) => (value * Math.PI) / 180;
-    const R = 6371; // Radius of Earth in kilometers
-
+    const R = 6371;
     const dLat = toRad(coords2.lat - coords1.lat);
     const dLon = toRad(coords2.lng - coords1.lng);
 
     const a =
         Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(toRad(coords1.lat)) *
-        Math.cos(toRad(coords2.lat)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
+        Math.cos(toRad(coords1.lat)) * Math.cos(toRad(coords2.lat)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
 
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return parseFloat((R * c).toFixed(1));
@@ -174,9 +162,7 @@ export default function CartPage({ onOpenCart, onOpenLogin, onOrderPlaced }) {
 
             if (!data || data.length === 0) {
                 response = await fetch(
-                    `https://nominatim.openstreetmap.org/search?format=json&limit=5&q=${encodeURIComponent(
-                        trimmedQuery
-                    )}`
+                    `https://nominatim.openstreetmap.org/search?format=json&limit=5&q=${encodeURIComponent(trimmedQuery)}`
                 );
                 data = await response.json();
             }
@@ -192,11 +178,11 @@ export default function CartPage({ onOpenCart, onOpenLogin, onOrderPlaced }) {
                 const shortName = topResult.display_name.split(',').slice(0, 2).join(', ');
                 handleLocationUpdate(resultCoords, `Found: ${shortName}`);
             } else {
-                setLocationStatus(`No results found for "${trimmedQuery}". Drag pin manually.`);
+                setLocationStatus(`No results found for "${trimmedQuery}".`);
             }
         } catch (error) {
             console.error('Search error:', error);
-            setLocationStatus('Search service offline. Drag pin on map.');
+            setLocationStatus('Search unavailable. Drag pin on map.');
         } finally {
             setIsSearching(false);
         }
@@ -217,24 +203,17 @@ export default function CartPage({ onOpenCart, onOpenLogin, onOrderPlaced }) {
                     lat: position.coords.latitude,
                     lng: position.coords.longitude
                 };
-
                 handleLocationUpdate(accurateCoords, 'GPS Location Found');
                 setIsDetectingLocation(false);
             },
-            (error) => {
-                console.warn('GPS error:', error.message);
-                setLocationStatus('IP/Network position used. Search or drag pin for exact spot.');
+            () => {
+                setLocationStatus('Unable to acquire GPS. Pick on map.');
                 setIsDetectingLocation(false);
             },
-            {
-                enableHighAccuracy: true,
-                timeout: 12000,
-                maximumAge: 0
-            }
+            { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
         );
     };
 
-    // --- Bill Calculations ---
     const subtotal = Number(cartTotal) || 0;
     const deliveryFee = calculateSwiggyDeliveryFee(distanceKm);
     const grandTotal = subtotal + deliveryFee + PLATFORM_FEE;
@@ -254,7 +233,6 @@ export default function CartPage({ onOpenCart, onOpenLogin, onOrderPlaced }) {
             });
             return;
         }
-
         setIsShippingModalOpen(true);
     };
 
@@ -267,17 +245,11 @@ export default function CartPage({ onOpenCart, onOpenLogin, onOrderPlaced }) {
                 email: currentUser?.email || ''
             },
             detectedLocation: locationStatus,
-            coordinates: {
-                latitude: userLocation.lat,
-                longitude: userLocation.lng
-            },
+            coordinates: { latitude: userLocation.lat, longitude: userLocation.lng },
             shippingDetails: {
                 ...shippingDetails,
                 detectedLocation: locationStatus,
-                coordinates: {
-                    latitude: userLocation.lat,
-                    longitude: userLocation.lng
-                }
+                coordinates: { latitude: userLocation.lat, longitude: userLocation.lng }
             },
             items: cartItems.map(item => ({
                 id: item.id,
@@ -285,12 +257,7 @@ export default function CartPage({ onOpenCart, onOpenLogin, onOrderPlaced }) {
                 price: Number(item.price),
                 quantity: item.quantity
             })),
-            breakdown: {
-                subtotal: subtotal,
-                deliveryFee: deliveryFee,
-                platformFee: PLATFORM_FEE,
-                distanceKm: distanceKm
-            },
+            breakdown: { subtotal, deliveryFee, platformFee: PLATFORM_FEE, distanceKm },
             total: Number(grandTotal.toFixed(2)),
             status: 'Order Placed',
             createdAt: new Date().toISOString()
@@ -298,36 +265,39 @@ export default function CartPage({ onOpenCart, onOpenLogin, onOrderPlaced }) {
 
         try {
             setIsShippingModalOpen(false);
-
-            if (saveOrderToContext) {
-                await saveOrderToContext(newOrder);
-            }
+            if (saveOrderToContext) await saveOrderToContext(newOrder);
 
             const existing = JSON.parse(localStorage.getItem('earthbasket_orders') || '[]');
-            const updated = [newOrder, ...existing.filter(o => o.id !== newOrder.id)];
-            localStorage.setItem('earthbasket_orders', JSON.stringify(updated));
+            localStorage.setItem('earthbasket_orders', JSON.stringify([newOrder, ...existing]));
 
             clearCart();
-
-            if (onOrderPlaced) {
-                onOrderPlaced();
-            } else {
-                window.location.href = '/orders';
-            }
+            if (onOrderPlaced) onOrderPlaced();
+            else window.location.href = '/orders';
         } catch (error) {
             console.error("Failed to save order:", error);
         }
     };
 
     return (
-        <div>
+        <div style={{ backgroundColor: '#f8fafc', minHeight: '100vh' }}>
             <Navbar onOpenCart={onOpenCart} onOpenLogin={onOpenLogin} />
 
             <div className="cart-page-container">
-                <h1 className="cart-page-title">Shopping Checkout</h1>
+                <div className="cart-page-header">
+                    <h1 className="cart-page-title">Shopping Checkout</h1>
+                    {cartItems.length > 0 && (
+                        <span className="cart-item-count-badge">
+                            {cartItems.length} {cartItems.length === 1 ? 'item' : 'items'}
+                        </span>
+                    )}
+                </div>
 
                 {cartItems.length === 0 ? (
-                    <p style={{ marginTop: '20px', color: '#64748b' }}>Your cart is empty.</p>
+                    <div style={{ textAlign: 'center', padding: '60px 20px', background: '#fff', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
+                        <ShoppingBag size={48} color="#cbd5e1" style={{ marginBottom: '12px' }} />
+                        <h3 style={{ margin: '0 0 8px 0', color: '#0f172a' }}>Your cart is empty</h3>
+                        <p style={{ color: '#64748b', margin: 0 }}>Explore our catalog to add fresh groceries to your cart.</p>
+                    </div>
                 ) : (
                     <div className="cart-layout-grid">
                         <div className="cart-items-list">
@@ -336,7 +306,7 @@ export default function CartPage({ onOpenCart, onOpenLogin, onOrderPlaced }) {
                                     <img src={item.image} alt={item.name} className="cart-item-img" />
                                     <div className="cart-item-details">
                                         <h4 className="cart-item-title">{item.name}</h4>
-                                        <p className="cart-item-price">₹{Number(item.price).toFixed(2)} x {item.quantity}</p>
+                                        <p className="cart-item-price">₹{Number(item.price).toFixed(2)} × {item.quantity}</p>
                                     </div>
                                     <button
                                         onClick={() => removeFromCart(item.id)}
@@ -363,7 +333,6 @@ export default function CartPage({ onOpenCart, onOpenLogin, onOrderPlaced }) {
                                             type="button"
                                             onClick={toggleMapType}
                                             className={`map-view-toggle-btn ${mapType === 'satellite' ? 'active-satellite' : ''}`}
-                                            title="Toggle Streets / Satellite View"
                                         >
                                             {mapType === 'streets' ? <Globe size={12} /> : <Layers size={12} />}
                                             {mapType === 'streets' ? 'Satellite' : 'Streets'}
@@ -380,11 +349,10 @@ export default function CartPage({ onOpenCart, onOpenLogin, onOrderPlaced }) {
                                     </div>
                                 </div>
 
-                                {/* Search Bar */}
                                 <form onSubmit={handleSearchLocation} className="map-search-form">
                                     <input
                                         type="text"
-                                        placeholder="Search any location, street, or landmark..."
+                                        placeholder="Search location or landmark..."
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                         className="map-search-input"
@@ -394,7 +362,6 @@ export default function CartPage({ onOpenCart, onOpenLogin, onOrderPlaced }) {
                                     </button>
                                 </form>
 
-                                {/* Quick Presets */}
                                 <div className="preset-badges-container">
                                     {LOCALITY_PRESETS.map((preset) => (
                                         <button
@@ -408,7 +375,7 @@ export default function CartPage({ onOpenCart, onOpenLogin, onOrderPlaced }) {
                                     ))}
                                 </div>
 
-                                <p className="manual-map-hint">Drag marker or click on map to position pin:</p>
+                                <p className="manual-map-hint">Drag marker to exact drop spot:</p>
 
                                 <div className="cart-map-wrapper">
                                     <MapContainer
@@ -449,19 +416,19 @@ export default function CartPage({ onOpenCart, onOpenLogin, onOrderPlaced }) {
 
                                 <div className="summary-row">
                                     <span className="bill-item-with-icon">
-                                        <Truck size={14} color="#64748b" /> Delivery Fee ({distanceKm} km)
+                                        <Truck size={14} color="#64748b" style={{ marginRight: '4px' }} /> Delivery Fee ({distanceKm} km)
                                     </span>
                                     <span>₹{deliveryFee.toFixed(2)}</span>
                                 </div>
 
                                 <div className="summary-row">
                                     <span className="bill-item-with-icon">
-                                        Platform Fee <Info size={12} color="#94a3b8" title="Supports platform operations" />
+                                        Platform Fee <Info size={12} color="#94a3b8" style={{ marginLeft: '4px' }} title="Supports platform operations" />
                                     </span>
                                     <span>₹{PLATFORM_FEE.toFixed(2)}</span>
                                 </div>
 
-                                <hr style={{ border: 'none', borderTop: '1px solid #e2e8f0', margin: '14px 0' }} />
+                                <hr style={{ border: 'none', borderTop: '1px solid #e2e8f0', margin: '12px 0' }} />
 
                                 <div className="summary-row summary-row-total">
                                     <span>To Pay</span>

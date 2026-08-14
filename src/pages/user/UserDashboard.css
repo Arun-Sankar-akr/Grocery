@@ -1,23 +1,51 @@
-/* UserDashboard.css - Mobile Responsive Layout */
+.dashboard-page-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f8fafc;
+}
 
 .user-layout {
     display: flex;
     max-width: 1200px;
-    margin: 30px auto;
-    gap: 30px;
-    padding: 0 20px;
+    width: 100%;
+    margin: 36px auto;
+    gap: 32px;
+    padding: 0 24px;
+    box-sizing: border-box;
+    flex: 1;
 }
 
 .user-main-panel {
     flex: 1;
+    min-width: 0;
+}
+
+.dashboard-placeholder-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+}
+
+.dashboard-placeholder-card h2 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-top: 0;
+}
+
+.dashboard-placeholder-card p {
+    color: #64748b;
+    font-size: 0.9rem;
 }
 
 /* --- Mobile Responsiveness --- */
 @media (max-width: 768px) {
     .user-layout {
         flex-direction: column;
-        /* Stacks sidebar and main content vertically */
-        margin: 16px auto;
+        margin: 20px auto;
         gap: 20px;
         padding: 0 16px;
     }

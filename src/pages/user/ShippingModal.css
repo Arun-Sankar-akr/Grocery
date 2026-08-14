@@ -1,141 +1,144 @@
 .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(15, 23, 42, 0.65);
-    backdrop-filter: blur(4px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    padding: 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
 }
 
 .shipping-modal-card {
-    background: #ffffff;
-    width: 100%;
-    max-width: 440px;
-    border-radius: 20px;
-    padding: 28px 24px;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
-    position: relative;
-    animation: modalFadeIn 0.25s ease-out;
+  background: #ffffff;
+  width: 100%;
+  max-width: 440px;
+  border-radius: 20px;
+  padding: 28px 24px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  position: relative;
+  animation: modalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes modalFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(16px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .modal-close-btn {
-    position: absolute;
-    top: 18px;
-    right: 18px;
-    background: #f1f5f9;
-    border: none;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #64748b;
-    cursor: pointer;
-    transition: all 0.2s ease;
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  background: #f1f5f9;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .modal-close-btn:hover {
-    background: #e2e8f0;
-    color: #0f172a;
+  background: #e2e8f0;
+  color: #0f172a;
 }
 
 .shipping-modal-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
 }
 
 .shipping-modal-header h3 {
-    font-size: 1.25rem;
-    font-weight: 800;
-    color: #0f172a;
-    margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
 }
 
 .shipping-modal-subtitle {
-    font-size: 0.82rem;
-    color: #64748b;
-    margin: 0 0 16px;
+  font-size: 0.82rem;
+  color: #64748b;
+  margin: 0 0 16px;
 }
 
-/* Banner displaying location detection from cart page */
 .location-detected-banner {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background-color: #ecfdf5;
-    border: 1px solid #a7f3d0;
-    border-radius: 10px;
-    padding: 10px 12px;
-    margin-bottom: 18px;
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: #047857;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-bottom: 18px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #047857;
 }
 
 .shipping-field {
-    margin-bottom: 14px;
+  margin-bottom: 14px;
 }
 
 .shipping-field label {
-    display: block;
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: #475569;
-    margin-bottom: 6px;
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #475569;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
 .shipping-field input {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1.5px solid #cbd5e1;
-    border-radius: 10px;
-    font-size: 0.88rem;
-    outline: none;
-    box-sizing: border-box;
-    font-family: inherit;
-    transition: border-color 0.2s ease;
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  outline: none;
+  box-sizing: border-box;
+  font-family: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .shipping-field input:focus {
-    border-color: #059669;
+  border-color: #059669;
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12);
 }
 
 .confirm-order-btn {
-    width: 100%;
-    background: linear-gradient(135deg, #059669 0%, #047857 100%);
-    color: #ffffff;
-    padding: 14px;
-    border-radius: 10px;
-    font-weight: 800;
-    font-size: 0.95rem;
-    margin-top: 10px;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
+  width: 100%;
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  color: #ffffff;
+  padding: 14px;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  margin-top: 10px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 6px 16px -2px rgba(5, 150, 105, 0.35);
+  transition: all 0.2s ease;
 }
 
 .confirm-order-btn:hover {
-    background: linear-gradient(135deg, #047857 0%, #065f46 100%);
-    transform: translateY(-1px);
+  background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px -2px rgba(5, 150, 105, 0.4);
 }

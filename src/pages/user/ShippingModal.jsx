@@ -41,18 +41,17 @@ export default function ShippingModal({
         <div className="modal-overlay">
             <div className="shipping-modal-card">
                 <button className="modal-close-btn" onClick={onClose} type="button">
-                    <X size={20} />
+                    <X size={18} />
                 </button>
 
                 <div className="shipping-modal-header">
-                    <MapPin size={24} color="#059669" />
+                    <MapPin size={22} color="#059669" />
                     <h3>Delivery Contact & Address</h3>
                 </div>
                 <p className="shipping-modal-subtitle">
-                    Enter your contact info to confirm the order.
+                    Confirm your information to finalize your order delivery.
                 </p>
 
-                {/* Location Confirmation Notice */}
                 <div className="location-detected-banner">
                     <CheckCircle2 size={18} color="#059669" />
                     <span>Selected Location: <strong>{locationText || 'Pinned on Cart Page'}</strong></span>

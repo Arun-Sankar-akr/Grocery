@@ -1,22 +1,56 @@
+/* --- Modern Variable-Driven Root --- */
+:root {
+    --primary-emerald: #059669;
+    --primary-hover: #047857;
+    --bg-subtle: #f8fafc;
+    --card-bg: #ffffff;
+    --border-subtle: #e2e8f0;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+    --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.04);
+    --shadow-md: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
+}
+
 .cart-page-container {
-    max-width: 1100px;
-    margin: 40px auto;
+    max-width: 1140px;
+    margin: 36px auto;
     padding: 0 24px;
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: var(--text-primary);
+}
+
+.cart-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 28px;
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: 16px;
 }
 
 .cart-page-title {
     font-size: 2.1rem;
     font-weight: 800;
-    color: #0f172a;
+    color: var(--text-primary);
     letter-spacing: -0.025em;
-    margin-bottom: 24px;
+    margin: 0;
+}
+
+.cart-item-count-badge {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--primary-emerald);
+    background-color: #ecfdf5;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    border: 1px solid #a7f3d0;
 }
 
 .cart-layout-grid {
     display: grid;
-    grid-template-columns: 1.45fr 1fr;
-    gap: 36px;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 32px;
     align-items: start;
 }
 
@@ -30,27 +64,27 @@
 .cart-item-card {
     display: flex;
     align-items: center;
-    background: #ffffff;
-    border: 1px solid #f1f5f9;
+    background: var(--card-bg);
+    border: 1px solid var(--border-subtle);
     border-radius: 16px;
-    padding: 16px 20px;
-    box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    padding: 18px 20px;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .cart-item-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
-    border-color: #e2e8f0;
+    box-shadow: var(--shadow-md);
+    border-color: #cbd5e1;
 }
 
 .cart-item-img {
-    width: 68px;
-    height: 68px;
+    width: 72px;
+    height: 72px;
     object-fit: cover;
     border-radius: 12px;
     border: 1px solid #f1f5f9;
-    background-color: #fafafa;
+    background-color: #f8fafc;
 }
 
 .cart-item-details {
@@ -59,14 +93,14 @@
 }
 
 .cart-item-title {
-    font-size: 1rem;
+    font-size: 1.05rem;
     font-weight: 700;
-    color: #0f172a;
+    color: var(--text-primary);
     margin: 0 0 6px 0;
 }
 
 .cart-item-price {
-    font-size: 0.9rem;
+    font-size: 0.92rem;
     font-weight: 700;
     color: #2563eb;
     margin: 0;
@@ -88,38 +122,38 @@
 .cart-item-remove-btn:hover {
     background-color: #fee2e2;
     color: #dc2626;
-    transform: scale(1.05);
+    transform: scale(1.08);
 }
 
-/* --- Order Summary Card (Right Column) --- */
+/* --- Order Summary Card --- */
 .cart-summary-card {
-    background: #ffffff;
-    border: 1px solid #f1f5f9;
+    background: var(--card-bg);
+    border: 1px solid var(--border-subtle);
     border-radius: 20px;
     padding: 24px;
-    box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.06);
+    box-shadow: var(--shadow-md);
     position: sticky;
-    top: 20px;
+    top: 24px;
 }
 
 .summary-card-title {
     font-size: 1.2rem;
     font-weight: 800;
-    color: #0f172a;
+    color: var(--text-primary);
     margin-bottom: 20px;
     letter-spacing: -0.01em;
 }
 
-/* --- Delivery Map Container Box --- */
+/* --- Delivery Map Card --- */
 .manual-delivery-map-card {
-    background-color: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background-color: var(--bg-subtle);
+    border: 1px solid var(--border-subtle);
     border-radius: 16px;
     padding: 16px;
     margin-bottom: 20px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
 }
 
 .manual-map-header {
@@ -134,7 +168,7 @@
     gap: 6px;
     font-weight: 700;
     font-size: 0.9rem;
-    color: #0f172a;
+    color: var(--text-primary);
 }
 
 .map-header-actions {
@@ -150,7 +184,7 @@
     padding: 6px 10px;
     font-size: 0.75rem;
     font-weight: 600;
-    color: #334155;
+    color: var(--text-secondary);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -162,7 +196,7 @@
 .map-view-toggle-btn:hover,
 .gps-btn:hover {
     background-color: #f1f5f9;
-    color: #0f172a;
+    color: var(--text-primary);
     border-color: #94a3b8;
 }
 
@@ -170,7 +204,6 @@
     background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
     color: #f8fafc;
     border-color: #0f172a;
-    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.2);
 }
 
 /* Map Search Form */
@@ -185,18 +218,18 @@
     border-radius: 10px;
     border: 1px solid #cbd5e1;
     background-color: #ffffff;
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     outline: none;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .map-search-input:focus {
-    border-color: #059669;
-    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12);
+    border-color: var(--primary-emerald);
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
 }
 
 .map-search-btn {
-    background-color: #059669;
+    background-color: var(--primary-emerald);
     color: #ffffff;
     border: none;
     border-radius: 10px;
@@ -209,10 +242,10 @@
 }
 
 .map-search-btn:hover {
-    background-color: #047857;
+    background-color: var(--primary-hover);
 }
 
-/* Locality Presets */
+/* Locality Badges */
 .preset-badges-container {
     display: flex;
     flex-wrap: wrap;
@@ -226,7 +259,7 @@
     padding: 4px 10px;
     font-size: 0.72rem;
     font-weight: 500;
-    color: #475569;
+    color: var(--text-secondary);
     cursor: pointer;
     transition: all 0.2s ease;
 }
@@ -238,26 +271,25 @@
 
 .preset-badge.active {
     background-color: #ecfdf5;
-    border-color: #059669;
-    color: #047857;
+    border-color: var(--primary-emerald);
+    color: var(--primary-hover);
     font-weight: 700;
     box-shadow: 0 2px 6px rgba(5, 150, 105, 0.15);
 }
 
 .manual-map-hint {
     font-size: 0.75rem;
-    color: #64748b;
-    margin: 2px 0 0 0;
+    color: var(--text-muted);
+    margin: 0;
 }
 
-/* Map Wrapper */
+/* Map Container */
 .cart-map-wrapper {
-    height: 190px;
+    height: 200px;
     width: 100%;
     border-radius: 12px;
     overflow: hidden;
     border: 1px solid #cbd5e1;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .cart-leaflet-map {
@@ -270,12 +302,12 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-top: 4px;
+    padding-top: 2px;
 }
 
 .location-status-text {
     font-size: 0.76rem;
-    color: #475569;
+    color: var(--text-secondary);
     font-weight: 500;
     max-width: 70%;
     white-space: nowrap;
@@ -285,57 +317,68 @@
 
 .distance-badge {
     font-weight: 800;
-    font-size: 0.88rem;
-    color: #047857;
+    font-size: 0.85rem;
+    color: var(--primary-hover);
     background-color: #ecfdf5;
     padding: 4px 10px;
     border-radius: 8px;
     border: 1px solid #a7f3d0;
 }
 
-/* --- Summary Details --- */
+/* --- Bill Summary --- */
+.bill-details-section {
+    background-color: var(--bg-subtle);
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.bill-details-heading {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 14px 0;
+}
+
 .summary-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
-    font-size: 0.9rem;
-    color: #475569;
+    margin-bottom: 10px;
+    font-size: 0.88rem;
+    color: var(--text-secondary);
     font-weight: 500;
 }
 
 .summary-row-total {
     font-size: 1.15rem;
     font-weight: 800;
-    color: #0f172a;
+    color: var(--text-primary);
+    margin-top: 10px;
+    margin-bottom: 0;
 }
 
-/* Rich CTA Place Order Button */
 .place-order-btn {
     width: 100%;
-    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    background: linear-gradient(135deg, var(--primary-emerald) 0%, var(--primary-hover) 100%);
     color: #ffffff;
     padding: 16px;
     border-radius: 14px;
     font-weight: 800;
     font-size: 1rem;
-    margin-top: 20px;
     border: none;
     cursor: pointer;
     box-shadow: 0 8px 20px -4px rgba(5, 150, 105, 0.4);
-    transition: all 0.25 ease;
-    letter-spacing: 0.01em;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .place-order-btn:hover {
-    background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+    transform: translateY(-2px);
     box-shadow: 0 12px 24px -4px rgba(5, 150, 105, 0.5);
-    transform: translateY(-1px);
-}
-
-.place-order-btn:active {
-    transform: translateY(1px);
-    box-shadow: 0 4px 12px -2px rgba(5, 150, 105, 0.4);
 }
 
 /* Keyframe Animations */
@@ -353,7 +396,7 @@
     animation: spin 1s linear infinite;
 }
 
-/* Responsive adjustments */
+/* Responsiveness */
 @media (max-width: 768px) {
     .cart-layout-grid {
         grid-template-columns: 1fr;
@@ -364,38 +407,4 @@
         padding: 0 16px;
         margin: 20px auto;
     }
-
-    .cart-summary-card {
-        padding: 18px;
-    }
-}
-
-/* Swiggy Bill Details Styling */
-.bill-details-section {
-    background-color: #fafafa;
-    border: 1px solid #f1f5f9;
-    border-radius: 12px;
-    padding: 14px 16px;
-    margin-bottom: 16px;
-}
-
-.bill-details-heading {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: #0f172a;
-    margin: 0 0 12px 0;
-}
-
-.bill-item-with-icon {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.leaflet-control-attribution,
-.leaflet-control {
-    display: none;
 }

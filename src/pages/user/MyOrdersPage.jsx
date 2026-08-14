@@ -9,7 +9,7 @@ export default function MyOrdersPage({ onSelectOrder }) {
     const { currentUser } = useAuth();
 
     const userOrders = orders.filter((ord) => {
-        if (!currentUser) return true; // Show all for guest testing
+        if (!currentUser) return true;
         const ordUserId = ord.userId || ord.user?.uid;
         const ordEmail = ord.userEmail || ord.customerEmail || ord.user?.email;
         return ordUserId === currentUser.uid || ordEmail === currentUser.email;
@@ -17,12 +17,15 @@ export default function MyOrdersPage({ onSelectOrder }) {
 
     return (
         <div>
-            <h2 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '20px' }}>
-                My Orders
-            </h2>
+            <div className="orders-page-header">
+                <h2 className="orders-page-title">My Orders</h2>
+                <p className="orders-page-subtitle">View and track all your grocery orders</p>
+            </div>
 
             {userOrders.length === 0 ? (
-                <p style={{ color: '#64748b' }}>No orders found.</p>
+                <div className="order-history-card" style={{ textAlign: 'center', color: '#64748b' }}>
+                    <p>No orders found yet.</p>
+                </div>
             ) : (
                 userOrders.map((ord) => {
                     const orderTotal = Number(ord.total || ord.totalAmount || 0);
@@ -31,38 +34,30 @@ export default function MyOrdersPage({ onSelectOrder }) {
                         <div key={ord.id} className="order-history-card">
                             <div className="order-card-header">
                                 <div>
-                                    <span style={{ fontWeight: 800 }}>#{String(ord.id).slice(0, 8)}</span>
-                                    <span style={{ fontSize: '0.8rem', color: '#64748b', marginLeft: '12px' }}>
+                                    <span className="order-id-tag">#{String(ord.id).slice(0, 8)}</span>
+                                    <span className="order-date-tag">
                                         {new Date(ord.createdAt || Date.now()).toLocaleDateString()}
                                     </span>
                                 </div>
                                 <OrderStatusBadge status={ord.status || 'Order Placed'} />
                             </div>
 
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div className="order-card-body">
                                 <div>
-                                    <p style={{ fontSize: '0.85rem', color: '#475569' }}>
+                                    <p className="order-items-summary">
                                         {ord.items && ord.items.length > 0
                                             ? ord.items.map((i) => `${i.name} (${i.quantity || 1})`).join(', ')
                                             : 'Grocery Items'}
                                     </p>
-                                    <p style={{ fontWeight: 800, marginTop: '4px' }}>₹{orderTotal.toFixed(2)}</p>
+                                    <p className="order-price-summary">₹{orderTotal.toFixed(2)}</p>
                                 </div>
 
-                                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                                <div className="order-actions-group">
                                     {ord.status !== 'Cancelled' && ord.status !== 'Delivered' && (
                                         <button
                                             onClick={() => cancelOrder(ord.id)}
-                                            style={{
-                                                color: '#dc2626',
-                                                fontWeight: 600,
-                                                fontSize: '0.8rem',
-                                                background: '#fee2e2',
-                                                padding: '6px 12px',
-                                                borderRadius: '6px',
-                                                border: 'none',
-                                                cursor: 'pointer'
-                                            }}
+                                            className="btn-cancel-order"
+                                            type="button"
                                         >
                                             Cancel Order
                                         </button>
@@ -70,14 +65,8 @@ export default function MyOrdersPage({ onSelectOrder }) {
 
                                     <button
                                         onClick={() => onSelectOrder && onSelectOrder(ord)}
-                                        style={{
-                                            color: '#059669',
-                                            fontWeight: 700,
-                                            fontSize: '0.85rem',
-                                            background: 'none',
-                                            border: 'none',
-                                            cursor: 'pointer'
-                                        }}
+                                        className="btn-track-order"
+                                        type="button"
                                     >
                                         Track Order →
                                     </button>

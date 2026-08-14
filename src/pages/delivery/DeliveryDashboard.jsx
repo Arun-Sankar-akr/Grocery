@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import DeliverySidebar from '../../components/delivery/DeliverySidebar';
 import DeliveryOrderCard from '../../components/delivery/DeliveryOrderCard';
 import OrderDetailsModal from '../../components/admin/OrderDetailsModal';
@@ -10,6 +11,15 @@ import './Delivery.css';
 
 export default function DeliveryDashboard() {
     const { currentUser, logout } = useAuth();
+    const navigate = useNavigate();
+
+    // Fallback to localStorage session if AuthContext isn't persisted directly
+    const savedDriver = JSON.parse(localStorage.getItem('deliveryUser') || '{}');
+
+    const currentDriver = {
+        id: currentUser?.uid || currentUser?.id || savedDriver.id || 'DP-000',
+        name: currentUser?.name || currentUser?.displayName || savedDriver.name || 'Delivery Partner'
+    };
 
     const [activeTab, setActiveTab] = useState('active-deliveries');
     const [selectedOrder, setSelectedOrder] = useState(null);
@@ -18,14 +28,22 @@ export default function DeliveryDashboard() {
     const [newOrderAlert, setNewOrderAlert] = useState(null);
     const [audioEnabled, setAudioEnabled] = useState(false);
 
-    const currentDriver = {
-        id: currentUser?.uid || currentUser?.id || 'DP-000',
-        name: currentUser?.name || currentUser?.displayName || 'Delivery Partner'
-    };
-
     const knownOrderIdsRef = useRef(new Set());
     const isInitialLoadRef = useRef(true);
     const audioCtxRef = useRef(null);
+
+    const handleLogout = async () => {
+        try {
+            localStorage.removeItem('deliveryUser');
+            if (logout) {
+                await logout();
+            }
+            navigate('/'); // Redirects to home page
+        } catch (error) {
+            console.error('Logout error:', error);
+            navigate('/'); // Fallback redirect if error occurs
+        }
+    };
 
     const enableAudio = () => {
         try {
@@ -160,7 +178,6 @@ export default function DeliveryDashboard() {
         return String(o.assignedToId) === String(currentDriver.id);
     });
 
-    // Compute total earnings from completed deliveries
     const totalDriverEarnings = completedOrders.reduce((sum, order) => {
         const fee = order.deliveryFee || 30;
         const earnings = order.driverEarnings || Math.round((fee * 0.8) + 15);
@@ -317,7 +334,7 @@ export default function DeliveryDashboard() {
                             Partner: <span style={{ color: '#059669', fontWeight: 700 }}>{currentDriver.name}</span>
                         </div>
                         <button
-                            onClick={logout}
+                            onClick={handleLogout}
                             style={{
                                 display: 'flex',
                                 alignItems: 'center',
@@ -345,7 +362,6 @@ export default function DeliveryDashboard() {
                         margin: '20px 0 10px 0'
                     }}
                 >
-                    {/* Total Driver Profit Widget */}
                     <div
                         style={{
                             background: '#f0fdf4',

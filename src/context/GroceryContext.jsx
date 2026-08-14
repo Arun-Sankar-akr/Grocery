@@ -16,6 +16,20 @@ export const GroceryProvider = ({ children }) => {
     const [cart, setCart] = useState([]);
     const [loading, setLoading] = useState(true);
 
+    // --- Modal State Management ---
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingProduct, setEditingProduct] = useState(null);
+
+    const openProductModal = (product = null) => {
+        setEditingProduct(product);
+        setIsModalOpen(true);
+    };
+
+    const closeProductModal = () => {
+        setIsModalOpen(false);
+        setEditingProduct(null);
+    };
+
     // 1. Real-time Listener for Products Collection
     useEffect(() => {
         const productsRef = collection(db, 'products');
@@ -67,28 +81,32 @@ export const GroceryProvider = ({ children }) => {
     }, []);
 
     // --- Product Handlers ---
-    const addOrUpdateProduct = async (productData) => {
+    const saveProduct = async (productData) => {
         try {
-            await apiSaveProduct(productData);
+            const payload = editingProduct?.id
+                ? { ...productData, id: editingProduct.id }
+                : productData;
+            await apiSaveProduct(payload);
         } catch (err) {
             console.error("Failed to save product:", err);
             throw err;
         }
     };
 
-    const removeProduct = async (id) => {
+    const deleteProduct = async (id) => {
         try {
-            await apiDeleteProduct(id);
+            if (window.confirm("Are you sure you want to delete this product?")) {
+                await apiDeleteProduct(id);
+            }
         } catch (err) {
             console.error("Failed to delete product:", err);
             throw err;
         }
     };
 
-    // --- Order Handlers (Generates EARTH-XXXX ID) ---
+    // --- Order Handlers ---
     const placeOrder = async (orderData) => {
         try {
-            // Generate order ID formatted as EARTH-XXXX (4 random digits)
             const generatedEarthId = orderData.id || `EARTH-${Math.floor(1000 + Math.random() * 9000)}`;
 
             const formattedOrder = {
@@ -99,7 +117,7 @@ export const GroceryProvider = ({ children }) => {
             };
 
             const created = await apiCreateOrder(formattedOrder);
-            setCart([]); // Clear cart upon successful order placement
+            setCart([]);
             return created || formattedOrder;
         } catch (err) {
             console.error("Failed to place order:", err);
@@ -159,8 +177,14 @@ export const GroceryProvider = ({ children }) => {
                 cart,
                 loading,
                 cartTotal,
-                addOrUpdateProduct,
-                removeProduct,
+                isModalOpen,
+                editingProduct,
+                openProductModal,
+                closeProductModal,
+                saveProduct,
+                deleteProduct,
+                addOrUpdateProduct: saveProduct,
+                removeProduct: deleteProduct,
                 placeOrder,
                 updateOrderStatus,
                 addToCart,
@@ -176,4 +200,5 @@ export const GroceryProvider = ({ children }) => {
     );
 };
 
+// EXPORT THE HOOK HERE
 export const useGrocery = () => useContext(GroceryContext);

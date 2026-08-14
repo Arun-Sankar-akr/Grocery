@@ -192,3 +192,25 @@ export async function cancelOrder(orderId) {
         throw error;
     }
 }
+
+
+export const deleteDeliveryPartner = async (partnerId) => {
+    try {
+        const partnerRef = doc(db, 'users', partnerId);
+        await deleteDoc(partnerRef);
+    } catch (error) {
+        console.error("Error deleting delivery partner:", error);
+        throw error;
+    }
+};
+
+// Update delivery partner details in Firestore
+export const updateDeliveryPartner = async (partnerId, updatedData) => {
+    try {
+        const partnerRef = doc(db, 'users', partnerId);
+        await updateDoc(partnerRef, updatedData);
+    } catch (error) {
+        console.error("Error updating delivery partner:", error);
+        throw error;
+    }
+};

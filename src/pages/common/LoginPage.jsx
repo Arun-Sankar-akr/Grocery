@@ -1,33 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth, ADMIN_EMAIL } from '../../context/AuthContext';
-import { CheckCircle2, AlertCircle, X } from 'lucide-react';
+import { CheckCircle2, AlertCircle, X, FileText } from 'lucide-react';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { db } from '../../service/firebase';
+import DeliveryPartnerApplicationModal from '../../components/LoginPage/DeliveryPartnerApplicationModal';
 import './LoginPage.css';
 
-export default function LoginPage({ onClose, redirectTo = '/' }) {
-    const { loginWithFirebase, registerWithFirebase } = useAuth();
+export default function LoginPage({ onClose, onLoginSuccess }) {
+    const { loginWithFirebase, registerWithFirebase, setCurrentUser } = useAuth();
     const [role, setRole] = useState('user');
     const [isRegistering, setIsRegistering] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [showApplyModal, setShowApplyModal] = useState(false);
 
     const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
+    const [identifier, setIdentifier] = useState('');
+    const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
 
     const [popup, setPopup] = useState({ visible: false, type: '', title: '', message: '' });
     const [countdown, setCountdown] = useState(null);
 
+    // Handles notification countdown and triggers close/login callbacks instead of page reloads
     useEffect(() => {
         let timer;
         if (countdown !== null && countdown > 0) {
-            timer = setTimeout(() => {
-                setCountdown((prev) => prev - 1);
-            }, 1000);
+            timer = setTimeout(() => setCountdown((prev) => prev - 1), 1000);
         } else if (countdown === 0) {
+            if (onLoginSuccess) onLoginSuccess();
             if (onClose) onClose();
-            window.location.href = redirectTo;
         }
         return () => clearTimeout(timer);
-    }, [countdown, onClose, redirectTo]);
+    }, [countdown, onClose, onLoginSuccess]);
 
     const showNotification = (type, title, message, startCountdown = false) => {
         setPopup({ visible: true, type, title, message });
@@ -45,7 +49,7 @@ export default function LoginPage({ onClose, redirectTo = '/' }) {
         setRole(newRole);
         setPopup({ visible: false, type: '', title: '', message: '' });
         setCountdown(null);
-        if (newRole === 'admin') {
+        if (newRole !== 'user') {
             setIsRegistering(false);
         }
     };
@@ -55,25 +59,80 @@ export default function LoginPage({ onClose, redirectTo = '/' }) {
         setLoading(true);
 
         try {
-            if (isRegistering && (role === 'user' || role === 'delivery')) {
+            if (isRegistering && role === 'user') {
                 if (!name.trim()) {
                     showNotification('error', 'Registration Failed', 'Please enter your full name.');
                     setLoading(false);
                     return;
                 }
-                await registerWithFirebase(name, email, password, role);
+                if (!phone.trim()) {
+                    showNotification('error', 'Registration Failed', 'Please enter your contact number.');
+                    setLoading(false);
+                    return;
+                }
+                await registerWithFirebase(name, identifier, password, role, phone);
                 showNotification(
                     'success',
                     'Account Created!',
-                    `Welcome, ${name}! Your ${role === 'delivery' ? 'Delivery Partner' : 'Customer'} account is ready.`,
+                    `Welcome, ${name}! Your Customer account is ready.`,
                     true
                 );
-            } else {
-                await loginWithFirebase(email, password, role);
+            } else if (role === 'delivery') {
+                // Firestore Delivery Authentication for Username/TempPassword
+                const usersRef = collection(db, 'users');
+                const cleanIdentifier = identifier.trim();
+
+                const qUsername = query(
+                    usersRef,
+                    where('username', '==', cleanIdentifier),
+                    where('tempPassword', '==', password.trim())
+                );
+
+                const qEmail = query(
+                    usersRef,
+                    where('email', '==', cleanIdentifier),
+                    where('tempPassword', '==', password.trim())
+                );
+
+                let querySnapshot = await getDocs(qUsername);
+                if (querySnapshot.empty) {
+                    querySnapshot = await getDocs(qEmail);
+                }
+
+                if (querySnapshot.empty) {
+                    await loginWithFirebase(identifier, password, role);
+                } else {
+                    let deliveryUserData = null;
+                    querySnapshot.forEach((docSnap) => {
+                        deliveryUserData = { id: docSnap.id, ...docSnap.data() };
+                    });
+
+                    if (deliveryUserData.status !== 'approved') {
+                        showNotification('error', 'Login Failed', 'Your delivery application is pending approval.');
+                        setLoading(false);
+                        return;
+                    }
+
+                    // Save session & set auth state
+                    if (setCurrentUser) {
+                        setCurrentUser(deliveryUserData);
+                    }
+                    localStorage.setItem('deliveryUser', JSON.stringify(deliveryUserData));
+                }
+
                 showNotification(
                     'success',
                     'Login Successful!',
-                    `Welcome back! Logged in as ${role === 'admin' ? 'Admin' : role === 'delivery' ? 'Delivery Partner' : 'Customer'}.`,
+                    'Welcome back, Delivery Partner!',
+                    true
+                );
+            } else {
+                await loginWithFirebase(identifier, password, role);
+
+                showNotification(
+                    'success',
+                    'Login Successful!',
+                    `Welcome back! Logged in as ${role === 'admin' ? 'Admin' : 'Customer'}.`,
                     true
                 );
             }
@@ -81,7 +140,7 @@ export default function LoginPage({ onClose, redirectTo = '/' }) {
             let errorMsg = 'Authentication failed. Please check your credentials.';
 
             if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
-                errorMsg = 'Invalid email or password. Please try again.';
+                errorMsg = 'Invalid credentials. Please check your username/email and password.';
             } else if (err.code === 'auth/email-already-in-use') {
                 errorMsg = 'An account with this email address already exists.';
             } else if (err.code === 'auth/weak-password') {
@@ -138,9 +197,7 @@ export default function LoginPage({ onClose, redirectTo = '/' }) {
                         {role === 'admin'
                             ? 'Administrator Portal'
                             : role === 'delivery'
-                                ? isRegistering
-                                    ? 'Register New Delivery Partner'
-                                    : 'Delivery Partner Portal'
+                                ? 'Delivery Partner Portal'
                                 : isRegistering
                                     ? 'Create Customer Account'
                                     : 'Customer Account Access'
@@ -176,33 +233,49 @@ export default function LoginPage({ onClose, redirectTo = '/' }) {
                 </div>
 
                 <form onSubmit={handleSubmit}>
-                    {isRegistering && (role === 'user' || role === 'delivery') && (
-                        <div className="login-field">
-                            <label>Full Name</label>
-                            <input
-                                type="text"
-                                placeholder={role === 'delivery' ? "e.g. Rahul Sharma" : "Enter your full name"}
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                disabled={loading}
-                                required
-                            />
-                        </div>
+                    {isRegistering && role === 'user' && (
+                        <>
+                            <div className="login-field">
+                                <label>Full Name</label>
+                                <input
+                                    type="text"
+                                    placeholder="Enter your full name"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    disabled={loading}
+                                    required
+                                />
+                            </div>
+
+                            <div className="login-field">
+                                <label>Contact Number</label>
+                                <input
+                                    type="tel"
+                                    placeholder="+91 98765 43210"
+                                    value={phone}
+                                    onChange={(e) => setPhone(e.target.value)}
+                                    disabled={loading}
+                                    required
+                                />
+                            </div>
+                        </>
                     )}
 
                     <div className="login-field">
-                        <label>Email Address</label>
+                        <label>
+                            {role === 'delivery' ? 'Username or Email Address' : 'Email Address'}
+                        </label>
                         <input
-                            type="email"
+                            type={role === 'delivery' ? "text" : "email"}
                             placeholder={
                                 role === 'admin'
                                     ? ADMIN_EMAIL
                                     : role === 'delivery'
-                                        ? 'driver@earthbasket.com'
+                                        ? 'driver_rahul'
                                         : 'your@email.com'
                             }
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            value={identifier}
+                            onChange={(e) => setIdentifier(e.target.value)}
                             disabled={loading}
                             required
                         />
@@ -224,15 +297,15 @@ export default function LoginPage({ onClose, redirectTo = '/' }) {
                         {loading
                             ? (countdown !== null ? `Redirecting in ${countdown}s...` : 'Processing...')
                             : isRegistering
-                                ? `Register as ${role === 'delivery' ? 'Delivery Partner' : 'Customer'}`
+                                ? 'Register Account'
                                 : `Login as ${role === 'admin' ? 'Admin' : role === 'delivery' ? 'Delivery Partner' : 'Customer'}`
                         }
                     </button>
                 </form>
 
-                {(role === 'user' || role === 'delivery') && (
+                {role === 'user' && (
                     <p style={{ textAlign: 'center', marginTop: '20px', fontSize: '0.82rem', color: '#64748b' }}>
-                        {isRegistering ? 'Already registered?' : "New Delivery Partner or Customer?"}{' '}
+                        {isRegistering ? 'Already registered?' : 'New Customer?'}{' '}
                         <button
                             type="button"
                             disabled={loading}
@@ -247,7 +320,45 @@ export default function LoginPage({ onClose, redirectTo = '/' }) {
                         </button>
                     </p>
                 )}
+
+                {role === 'delivery' && (
+                    <div style={{ textAlign: 'center', marginTop: '20px', paddingTop: '16px', borderTop: '1px solid #f1f5f9' }}>
+                        <p style={{ fontSize: '0.82rem', color: '#64748b', marginBottom: '10px' }}>
+                            Want to join our delivery team?
+                        </p>
+                        <button
+                            type="button"
+                            onClick={() => setShowApplyModal(true)}
+                            style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                background: '#ecfdf5',
+                                border: '1.5px solid #a7f3d0',
+                                color: '#047857',
+                                padding: '10px 18px',
+                                borderRadius: '10px',
+                                fontWeight: '700',
+                                fontSize: '0.85rem',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            <FileText size={16} />
+                            Apply for Delivery Partner Role
+                        </button>
+                    </div>
+                )}
             </div>
+
+            {showApplyModal && (
+                <DeliveryPartnerApplicationModal
+                    onClose={() => setShowApplyModal(false)}
+                    onSuccess={(msg) => {
+                        setShowApplyModal(false);
+                        showNotification('success', 'Application Submitted!', msg);
+                    }}
+                />
+            )}
         </div>
     );
 }

@@ -5,7 +5,11 @@ import { GroceryProvider } from './context/GroceryContext';
 
 import HomePage from './pages/common/HomePage';
 import AdminDashboard from './pages/admin/AdminDashboard';
-import DeliveryDashboard from './pages/delivery/DeliveryDashboard'; // Import Delivery Dashboard
+import ManageProductsPage from './pages/admin/ManageProductsPage';
+import ViewOrdersPage from './pages/admin/ViewOrdersPage';
+import AdminSideBar from './components/admin/AdminSideBar';
+
+import DeliveryDashboard from './pages/delivery/DeliveryDashboard';
 import UserDashboard from './pages/user/UserDashboard';
 import LoginPage from './pages/common/LoginPage';
 import CartDrawer from './components/user/CartDrawer';
@@ -13,25 +17,49 @@ import CartPage from './pages/user/CartPage';
 import AllProductsPage from './components/common/AllProductsPage';
 import OrderTrackingPage from './pages/user/OrderTrackingPage';
 
+// Complete Admin Workspace Layout with Sidebar Navigation
+function AdminLayout() {
+  const [activeTab, setActiveTab] = useState('deliveryPartners');
+
+  return (
+    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#f8fafc' }}>
+      <AdminSideBar activeTab={activeTab} setActiveTab={setActiveTab} />
+
+      <main style={{ flex: 1, padding: '24px', overflowY: 'auto' }}>
+        {activeTab === 'products' && <ManageProductsPage />}
+        {activeTab === 'orders' && <ViewOrdersPage />}
+        {(activeTab === 'deliveryPartners' || activeTab === 'dashboard') && <AdminDashboard />}
+      </main>
+    </div>
+  );
+}
+
 function AppContent() {
   const { currentUser } = useAuth();
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState('home');
   const [selectedOrder, setSelectedOrder] = useState(null);
 
-  // 1. Admin Role Route
-  if (currentUser?.role === 'admin') {
-    return <AdminDashboard />;
+  // Check LocalStorage session directly in case state update/reload hasn't settled yet
+  const savedDeliveryUser = JSON.parse(localStorage.getItem('deliveryUser') || 'null');
+  const effectiveUser = currentUser || savedDeliveryUser;
+
+  // 1. Admin Role Route (Renders Layout with Sidebar + Dynamic Tabs)
+  if (effectiveUser?.role === 'admin') {
+    return <AdminLayout />;
   }
 
   // 2. Delivery Partner Role Route
-  if (currentUser?.role === 'delivery' || currentUser?.role === 'delivery-partner') {
+  if (
+    effectiveUser?.role === 'delivery' || 
+    effectiveUser?.role === 'delivery-partner'
+  ) {
     return <DeliveryDashboard />;
   }
 
   // 3. Login Page
   if (currentPage === 'login') {
-    return <LoginPage onLoginSuccess={() => setCurrentPage('home')} />;
+    return <LoginPage onClose={() => setCurrentPage('home')} onLoginSuccess={() => setCurrentPage('home')} />;
   }
 
   // 4. Cart / Checkout Page

@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, ShoppingBag, ShoppingCart, LogOut, Sparkles } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, ShoppingCart, LogOut, Sparkles, Truck } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import './AdminSideBar.css';
 
@@ -43,6 +43,15 @@ export default function AdminSideBar({ activeTab, setActiveTab }) {
             <ShoppingCart size={18} />
             <span>Orders</span>
           </button>
+
+          <button
+            className={`admin-nav-item ${activeTab === 'deliveryPartners' ? 'active' : ''}`}
+            onClick={() => setActiveTab && setActiveTab('deliveryPartners')}
+          >
+            <Truck size={18} />
+            <span>Manage Delivery</span>
+          </button>
+
         </nav>
       </div>
 

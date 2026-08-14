@@ -1,5 +1,3 @@
-/* ProductModal.css - Premium Form Modal */
-
 .modal-overlay {
     position: fixed;
     inset: 0;
@@ -9,7 +7,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 16px;
+    overflow-y: auto;
 }
 
 .modal-box {
@@ -23,6 +22,7 @@
     position: relative;
     box-shadow: 0 24px 48px -12px rgba(15, 23, 42, 0.12);
     border: 1px solid #e2e8f0;
+    box-sizing: border-box;
 }
 
 .modal-close-btn {
@@ -139,6 +139,12 @@
 @media (max-width: 520px) {
     .modal-box {
         padding: 20px;
+        border-radius: 16px;
+    }
+
+    .modal-close-btn {
+        top: 16px;
+        right: 16px;
     }
 
     .form-grid-2 {

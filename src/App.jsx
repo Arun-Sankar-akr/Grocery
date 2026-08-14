@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { GroceryProvider } from './context/GroceryContext';
@@ -51,7 +52,7 @@ function AppContent() {
 
   // 2. Delivery Partner Role Route
   if (
-    effectiveUser?.role === 'delivery' || 
+    effectiveUser?.role === 'delivery' ||
     effectiveUser?.role === 'delivery-partner'
   ) {
     return <DeliveryDashboard />;
@@ -146,12 +147,14 @@ function AppContent() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <GroceryProvider>
-        <CartProvider>
-          <AppContent />
-        </CartProvider>
-      </GroceryProvider>
-    </AuthProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <GroceryProvider>
+          <CartProvider>
+            <AppContent />
+          </CartProvider>
+        </GroceryProvider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }

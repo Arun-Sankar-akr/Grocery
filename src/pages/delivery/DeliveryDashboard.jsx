@@ -13,7 +13,6 @@ export default function DeliveryDashboard() {
     const { currentUser, logout } = useAuth();
     const navigate = useNavigate();
 
-    // Fallback to localStorage session if AuthContext isn't persisted directly
     const savedDriver = JSON.parse(localStorage.getItem('deliveryUser') || '{}');
 
     const currentDriver = {
@@ -38,10 +37,10 @@ export default function DeliveryDashboard() {
             if (logout) {
                 await logout();
             }
-            navigate('/'); // Redirects to home page
+            navigate('/');
         } catch (error) {
             console.error('Logout error:', error);
-            navigate('/'); // Fallback redirect if error occurs
+            navigate('/');
         }
     };
 
@@ -240,218 +239,171 @@ export default function DeliveryDashboard() {
 
     return (
         <div
-            className="admin-dashboard-layout"
-            style={{ position: 'relative' }}
+            style={{
+                display: 'flex',
+                minHeight: '100vh',
+                backgroundColor: '#f8fafc',
+                width: '100%',
+                position: 'relative'
+            }}
             onClick={enableAudio}
         >
+            {/* Audio Enabled Bar */}
             {!audioEnabled && (
                 <div
                     onClick={enableAudio}
                     style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        right: 0,
                         backgroundColor: '#fef3c7',
                         color: '#92400e',
-                        padding: '8px 16px',
-                        fontSize: '0.85rem',
+                        padding: '6px 12px',
+                        fontSize: '0.75rem',
                         fontWeight: 600,
                         textAlign: 'center',
                         cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '8px',
+                        zIndex: 10000,
                         borderBottom: '1px solid #fde68a'
                     }}
                 >
-                    <Volume2 size={16} /> Click anywhere on this page once to enable live order sound alerts!
+                    <Volume2 size={14} style={{ verticalAlign: 'middle', marginRight: '4px' }} /> Tap anywhere to enable live order sound alerts!
                 </div>
             )}
 
+            {/* Notification Pop-up */}
             {newOrderAlert && (
                 <div
                     style={{
                         position: 'fixed',
-                        bottom: '24px',
-                        right: '24px',
+                        bottom: '80px',
+                        right: '16px',
+                        left: '16px',
+                        maxWidth: '400px',
+                        margin: '0 auto',
                         backgroundColor: '#0f172a',
                         color: '#ffffff',
-                        padding: '16px 20px',
+                        padding: '12px 16px',
                         borderRadius: '12px',
-                        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.3)',
+                        boxShadow: '0 10px 25px rgba(0,0,0,0.3)',
                         zIndex: 9999,
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '14px',
+                        justifyContent: 'space-between',
                         borderLeft: '5px solid #059669'
                     }}
                 >
-                    <div style={{ background: '#059669', padding: '8px', borderRadius: '50%', color: '#ffffff' }}>
-                        <BellRing size={20} />
-                    </div>
-                    <div>
-                        <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700 }}>New Order Arrived!</h4>
-                        <p style={{ margin: '2px 0 0 0', fontSize: '0.8rem', color: '#94a3b8' }}>
-                            Order #{String(newOrderAlert.id)} • ₹{Number(newOrderAlert.total || 0).toFixed(2)}
-                        </p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <div style={{ background: '#059669', padding: '6px', borderRadius: '50%', color: '#ffffff' }}>
+                            <BellRing size={18} />
+                        </div>
+                        <div>
+                            <h4 style={{ margin: 0, fontSize: '0.85rem', fontWeight: 700 }}>New Order Arrived!</h4>
+                            <p style={{ margin: '2px 0 0 0', fontSize: '0.75rem', color: '#94a3b8' }}>
+                                Order #{String(newOrderAlert.id)} • ₹{Number(newOrderAlert.total || 0).toFixed(2)}
+                            </p>
+                        </div>
                     </div>
                     <button
                         onClick={() => setNewOrderAlert(null)}
-                        style={{
-                            background: 'none',
-                            border: 'none',
-                            color: '#94a3b8',
-                            cursor: 'pointer',
-                            padding: '4px',
-                            marginLeft: '8px'
-                        }}
+                        style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: '4px' }}
                     >
                         <X size={16} />
                     </button>
                 </div>
             )}
 
+            {/* Render Sidebar */}
             <DeliverySidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
-            <main className="admin-main-content">
-                <header className="admin-top-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <h2>{isViewingActive ? 'Active Deliveries' : 'Completed Deliveries'}</h2>
-                        <span
-                            style={{
-                                backgroundColor: isViewingActive ? '#059669' : '#64748b',
-                                color: '#ffffff',
-                                padding: '4px 12px',
-                                borderRadius: '12px',
-                                fontSize: '0.8rem',
-                                fontWeight: 700
-                            }}
-                        >
-                            {displayOrders.length} {displayOrders.length === 1 ? 'Order' : 'Orders'}
-                        </span>
-                    </div>
-
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <div style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>
-                            Partner: <span style={{ color: '#059669', fontWeight: 700 }}>{currentDriver.name}</span>
-                        </div>
-                        <button
-                            onClick={handleLogout}
-                            style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '6px',
-                                padding: '6px 12px',
-                                background: '#fef2f2',
-                                border: '1px solid #fecaca',
-                                color: '#dc2626',
-                                borderRadius: '8px',
-                                fontSize: '0.8rem',
-                                fontWeight: 700,
-                                cursor: 'pointer'
-                            }}
-                        >
-                            <LogOut size={14} /> Logout
-                        </button>
-                    </div>
-                </header>
-
+            {/* Main Content Area */}
+            <main
+                style={{
+                    flex: 1,
+                    width: '100%',
+                    padding: '16px',
+                    paddingBottom: '80px',
+                    overflowX: 'hidden'
+                }}
+            >
+                {/* Header Strip */}
                 <div
                     style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-                        gap: '16px',
-                        margin: '20px 0 10px 0'
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        backgroundColor: '#ffffff',
+                        padding: '12px 16px',
+                        borderRadius: '12px',
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+                        marginBottom: '16px'
                     }}
                 >
-                    <div
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#059669' }}></div>
+                        <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#059669' }}>ONLINE</span>
+                        <span style={{ fontSize: '0.8rem', color: '#64748b' }}>| {currentDriver.name}</span>
+                    </div>
+                    <button
+                        onClick={handleLogout}
                         style={{
-                            background: '#f0fdf4',
-                            padding: '16px',
-                            borderRadius: '12px',
-                            border: '1px solid #bbf7d0',
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '14px'
+                            gap: '4px',
+                            padding: '6px 12px',
+                            background: '#fef2f2',
+                            border: '1px solid #fecaca',
+                            color: '#dc2626',
+                            borderRadius: '8px',
+                            fontSize: '0.75rem',
+                            fontWeight: 700,
+                            cursor: 'pointer'
                         }}
                     >
-                        <div style={{ background: '#dcfce7', padding: '10px', borderRadius: '10px', color: '#16a34a' }}>
-                            <Wallet size={22} />
-                        </div>
+                        <LogOut size={13} /> Logout
+                    </button>
+                </div>
+
+                {/* Driver Earnings Card */}
+                <div
+                    style={{
+                        background: '#ffffff',
+                        borderRadius: '14px',
+                        padding: '16px',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                        marginBottom: '16px'
+                    }}
+                >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', paddingBottom: '12px' }}>
                         <div>
-                            <p style={{ margin: 0, fontSize: '0.8rem', color: '#166534', fontWeight: 600 }}>Total Earnings</p>
-                            <h3 style={{ margin: '2px 0 0 0', fontSize: '1.3rem', fontWeight: 800, color: '#14532d' }}>
-                                ₹{totalDriverEarnings}
-                            </h3>
+                            <span style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>Today's Earnings</span>
+                            <h2 style={{ margin: '2px 0 0 0', fontSize: '1.5rem', fontWeight: 800, color: '#059669' }}>₹{totalDriverEarnings}</h2>
+                        </div>
+                        <div style={{ background: '#f0fdf4', padding: '10px', borderRadius: '12px', color: '#059669' }}>
+                            <Wallet size={24} />
                         </div>
                     </div>
 
-                    <div
-                        style={{
-                            background: '#ffffff',
-                            padding: '16px',
-                            borderRadius: '12px',
-                            border: '1px solid #e2e8f0',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '14px'
-                        }}
-                    >
-                        <div style={{ background: '#ecfdf5', padding: '10px', borderRadius: '10px', color: '#059669' }}>
-                            <Package size={22} />
+                    {/* Quick Stats Grid */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', paddingTop: '12px', textAlign: 'center' }}>
+                        <div>
+                            <span style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 600 }}>Active Queue</span>
+                            <p style={{ margin: '2px 0 0 0', fontSize: '1rem', fontWeight: 700, color: '#0f172a' }}>{activeOrders.length}</p>
+                        </div>
+                        <div style={{ borderLeft: '1px solid #f1f5f9', borderRight: '1px solid #f1f5f9' }}>
+                            <span style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 600 }}>On the Way</span>
+                            <p style={{ margin: '2px 0 0 0', fontSize: '1rem', fontWeight: 700, color: '#2563eb' }}>{outForDeliveryCount}</p>
                         </div>
                         <div>
-                            <p style={{ margin: 0, fontSize: '0.8rem', color: '#64748b', fontWeight: 600 }}>My Active Queue</p>
-                            <h3 style={{ margin: '2px 0 0 0', fontSize: '1.3rem', fontWeight: 800, color: '#0f172a' }}>
-                                {activeOrders.length}
-                            </h3>
-                        </div>
-                    </div>
-
-                    <div
-                        style={{
-                            background: '#ffffff',
-                            padding: '16px',
-                            borderRadius: '12px',
-                            border: '1px solid #e2e8f0',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '14px'
-                        }}
-                    >
-                        <div style={{ background: '#eff6ff', padding: '10px', borderRadius: '10px', color: '#2563eb' }}>
-                            <Truck size={22} />
-                        </div>
-                        <div>
-                            <p style={{ margin: 0, fontSize: '0.8rem', color: '#64748b', fontWeight: 600 }}>Out for Delivery</p>
-                            <h3 style={{ margin: '2px 0 0 0', fontSize: '1.3rem', fontWeight: 800, color: '#0f172a' }}>
-                                {outForDeliveryCount}
-                            </h3>
-                        </div>
-                    </div>
-
-                    <div
-                        style={{
-                            background: '#ffffff',
-                            padding: '16px',
-                            borderRadius: '12px',
-                            border: '1px solid #e2e8f0',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '14px'
-                        }}
-                    >
-                        <div style={{ background: '#f8fafc', padding: '10px', borderRadius: '10px', color: '#475569' }}>
-                            <CheckCircle2 size={22} />
-                        </div>
-                        <div>
-                            <p style={{ margin: 0, fontSize: '0.8rem', color: '#64748b', fontWeight: 600 }}>Completed</p>
-                            <h3 style={{ margin: '2px 0 0 0', fontSize: '1.3rem', fontWeight: 800, color: '#0f172a' }}>
-                                {completedOrders.length}
-                            </h3>
+                            <span style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 600 }}>Delivered</span>
+                            <p style={{ margin: '2px 0 0 0', fontSize: '1rem', fontWeight: 700, color: '#16a34a' }}>{completedOrders.length}</p>
                         </div>
                     </div>
                 </div>
 
-                <div style={{ margin: '15px 0' }}>
+                {/* Search Field */}
+                <div style={{ marginBottom: '16px' }}>
                     <div
                         style={{
                             display: 'flex',
@@ -460,35 +412,28 @@ export default function DeliveryDashboard() {
                             border: '1px solid #cbd5e1',
                             borderRadius: '10px',
                             padding: '10px 14px',
-                            gap: '10px',
-                            maxWidth: '480px'
+                            gap: '10px'
                         }}
                     >
                         <Search size={18} color="#64748b" />
                         <input
                             type="text"
-                            placeholder="Search by Order ID, customer name, mobile, address..."
+                            placeholder="Search Order ID, customer, address..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             style={{
                                 border: 'none',
                                 outline: 'none',
                                 width: '100%',
-                                fontSize: '0.9rem',
-                                color: '#0f172a'
+                                fontSize: '0.85rem',
+                                color: '#0f172a',
+                                background: 'transparent'
                             }}
                         />
                         {searchTerm && (
                             <button
                                 onClick={() => setSearchTerm('')}
-                                style={{
-                                    border: 'none',
-                                    background: 'none',
-                                    cursor: 'pointer',
-                                    fontSize: '0.8rem',
-                                    color: '#94a3b8',
-                                    fontWeight: 700
-                                }}
+                                style={{ border: 'none', background: 'none', cursor: 'pointer', fontSize: '0.75rem', color: '#94a3b8', fontWeight: 700 }}
                             >
                                 Clear
                             </button>
@@ -496,7 +441,18 @@ export default function DeliveryDashboard() {
                     </div>
                 </div>
 
-                <div className="delivery-grid" style={{ padding: '10px 0 20px 0' }}>
+                {/* Section Title */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                    <h3 style={{ margin: 0, fontSize: '0.9rem', fontWeight: 700, color: '#334155', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                        {isViewingActive ? 'Available & Assigned Orders' : 'Completed History'}
+                    </h3>
+                    <span style={{ background: '#e2e8f0', color: '#334155', fontSize: '0.75rem', fontWeight: 700, padding: '2px 8px', borderRadius: '10px' }}>
+                        {displayOrders.length}
+                    </span>
+                </div>
+
+                {/* Delivery Cards Container */}
+                <div className="delivery-grid">
                     {displayOrders.length > 0 ? (
                         displayOrders.map((order) => (
                             <DeliveryOrderCard
@@ -510,25 +466,26 @@ export default function DeliveryDashboard() {
                         ))
                     ) : (
                         <div
-                            className="no-data-msg"
                             style={{
-                                padding: '40px',
+                                padding: '32px 16px',
                                 textAlign: 'center',
                                 background: '#ffffff',
-                                borderRadius: '12px',
+                                borderRadius: '14px',
                                 border: '1px dashed #cbd5e1'
                             }}
                         >
-                            <p style={{ margin: 0, fontWeight: 700, fontSize: '1rem', color: '#334155' }}>
+                            <Package size={32} color="#94a3b8" style={{ marginBottom: '8px' }} />
+                            <p style={{ margin: 0, fontWeight: 700, fontSize: '0.9rem', color: '#475569' }}>
                                 {searchTerm
-                                    ? `No matching orders found for "${searchTerm}"`
-                                    : `No ${isViewingActive ? 'active' : 'completed'} deliveries available.`}
+                                    ? `No matching orders for "${searchTerm}"`
+                                    : `No ${isViewingActive ? 'active' : 'completed'} orders.`}
                             </p>
                         </div>
                     )}
                 </div>
             </main>
 
+            {/* Modal */}
             {selectedOrder && (
                 <OrderDetailsModal order={selectedOrder} onClose={() => setSelectedOrder(null)} />
             )}

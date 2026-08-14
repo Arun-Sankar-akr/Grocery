@@ -16,11 +16,11 @@ export default function OrderDetailsModal({ order, onClose }) {
             <div className="order-modal-card" onClick={(e) => e.stopPropagation()}>
                 <div className="order-modal-header">
                     <div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                        <div className="order-modal-title-wrapper">
                             <ShoppingBag size={18} color="#4f46e5" />
                             <h3 className="order-modal-title">Order #{order.id.slice(0, 8)}</h3>
                         </div>
-                        <span style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                        <span className="order-modal-date">
                             Placed on {order.date || (order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'Today')}
                         </span>
                     </div>

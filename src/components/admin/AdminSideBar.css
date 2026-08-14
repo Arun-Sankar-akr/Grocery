@@ -1,5 +1,4 @@
-/* AdminSidebar.css - Premium Emerald Light Theme */
-
+/* Sidebar Default (Desktop) */
 .admin-sidebar {
   width: 270px;
   background: #ffffff;
@@ -8,19 +7,25 @@
   height: 100vh;
   position: sticky;
   top: 0;
-  padding: 32px 20px;
+  padding: 28px 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   z-index: 100;
+  box-sizing: border-box;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.admin-sidebar-content {
+  display: flex;
+  flex-direction: column;
 }
 
 .admin-brand {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
   padding: 0 8px;
 }
 
@@ -38,7 +43,7 @@
 }
 
 .logo-text {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 1.35rem;
   font-weight: 800;
   color: #0f172a;
@@ -61,7 +66,7 @@
   border: 1px solid #a7f3d0;
   align-self: flex-start;
   margin-left: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .admin-nav {
@@ -69,7 +74,6 @@
   flex-direction: column;
   gap: 8px;
   flex: 1;
-  margin-top: 16px;
 }
 
 .admin-nav-item {
@@ -123,14 +127,86 @@
   transition: all 0.2s ease;
 }
 
-.logout-btn:hover {
+.logout-btns:hover {
   background: #ffe4e6;
   color: #be123c;
   border-color: #fda4af;
 }
 
-/* --- Mobile Bottom Navigation --- */
+/* Hidden Top Bar on Desktop */
+.admin-mobile-topbar {
+  display: none;
+}
+
+/* ========================================================= */
+/* Mobile & Tablet Responsive Adjustments                    */
+/* ========================================================= */
 @media (max-width: 768px) {
+  /* Top Bar Header */
+  .admin-mobile-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    position: sticky;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+    box-sizing: border-box;
+  }
+
+  .admin-brand-mobile {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .logo-icon-sm {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    flex-shrink: 0;
+  }
+
+  .logo-text-sm {
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.02em;
+  }
+
+  .logo-text-sm span {
+    color: #059669;
+  }
+
+  .mobile-logout-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: #fff1f2;
+    border: 1px solid #fecdd3;
+    color: #e11d48;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .mobile-logout-btn:active {
+    background: #ffe4e6;
+  }
+
+  /* Fixed Bottom Navigation Dock */
   .admin-sidebar {
     width: 100%;
     height: auto;
@@ -139,20 +215,25 @@
     top: auto;
     left: 0;
     right: 0;
-    padding: 8px 12px;
+    padding: 6px 8px;
     flex-direction: row;
     align-items: center;
     border-right: none;
     border-top: 1px solid #e2e8f0;
-    box-shadow: 0 -10px 25px rgba(15, 23, 42, 0.08);
-    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 -8px 20px rgba(15, 23, 42, 0.06);
+    background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(12px);
+    z-index: 1000;
   }
 
   .admin-brand,
   .admin-badge-tag,
   .admin-sidebar-footer {
-    display: none;
+    display: none !important;
+  }
+
+  .admin-sidebar-content {
+    width: 100%;
   }
 
   .admin-nav {
@@ -160,16 +241,44 @@
     justify-content: space-around;
     width: 100%;
     margin-top: 0;
-    gap: 4px;
+    gap: 2px;
   }
 
   .admin-nav-item {
     flex-direction: column;
     justify-content: center;
-    gap: 4px;
-    padding: 8px;
-    font-size: 0.72rem;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 2px;
+    font-size: 0.68rem;
     text-align: center;
-    border-radius: 10px;
+    border-radius: 8px;
+    border: none;
+    width: 100%;
   }
+
+  .admin-nav-item.active {
+    box-shadow: none;
+    background: #ecfdf5;
+  }
+
+  /* Ensure the layout stacks vertically on mobile */
+@media (max-width: 768px) {
+  /* Parent container holding sidebar + main screen */
+  .admin-layout,
+  div[style*="display: flex"] {
+    flex-direction: column !important;
+    width: 100% !important;
+    overflow-x: hidden;
+  }
+
+  /* Main content container */
+  .admin-main-content,
+  main {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 16px 16px 90px 16px !important; /* Bottom padding so bottom navigation doesn't cover content */
+    box-sizing: border-box;
+  }
+}
 }

@@ -7,7 +7,7 @@ import HomePage from './pages/common/HomePage';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import ManageProductsPage from './pages/admin/ManageProductsPage';
 import ViewOrdersPage from './pages/admin/ViewOrdersPage';
-import AdminSideBar from './components/admin/AdminSideBar';
+import AdminSideBar from './components/admin/AdminSidebar';
 
 import DeliveryDashboard from './pages/delivery/DeliveryDashboard';
 import UserDashboard from './pages/user/UserDashboard';

@@ -1,54 +1,75 @@
-import React from 'react';
-import { ShoppingBag, User, MapPin, Settings, LogOut } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
+import React, { useState } from 'react';
+import {
+    ShoppingBag,
+    User,
+    MapPin,
+    Settings,
+    LogOut,
+    ChevronDown,
+    ChevronUp
+} from 'lucide-react';
 import './UserSidebar.css';
 
-export default function UserSidebar({ activeTab = 'orders', onSelectTab }) {
-    const { currentUser, logout } = useAuth();
+export default function UserSidebar({ activeTab, onSelectTab, onLogout }) {
+    const [isMobileOpen, setIsMobileOpen] = useState(false);
 
     const menuItems = [
         { id: 'orders', label: 'My Orders', icon: ShoppingBag },
         { id: 'profile', label: 'Profile Details', icon: User },
         { id: 'addresses', label: 'Saved Addresses', icon: MapPin },
-        { id: 'settings', label: 'Account Settings', icon: Settings }
+        { id: 'settings', label: 'Account Settings', icon: Settings },
     ];
 
+    const handleTabClick = (tabId) => {
+        onSelectTab(tabId);
+        setIsMobileOpen(false); // Close menu automatically on selection on mobile
+    };
+
+    const activeItem = menuItems.find(item => item.id === activeTab);
+
     return (
-        <aside className="user-sidebar">
-            <div className="sidebar-user-card">
-                <div className="sidebar-avatar">
-                    {currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : 'U'}
+        <aside className="user-sidebar-card">
+            {/* Header / User Info */}
+            <div className="sidebar-user-info">
+                <div className="avatar">A</div>
+                <div className="user-details">
+                    <h3 className="user-name">Arun</h3>
+                    <p className="user-email">arunsanka@gmail.com</p>
                 </div>
-                <div className="sidebar-user-info">
-                    <h4 className="sidebar-user-name">{currentUser?.name || 'Guest User'}</h4>
-                    <p className="sidebar-user-email">{currentUser?.email || 'user@example.com'}</p>
-                </div>
+
+                {/* Mobile Toggle Button */}
+                <button
+                    className="mobile-toggle-btn"
+                    onClick={() => setIsMobileOpen(!isMobileOpen)}
+                    aria-label="Toggle navigation"
+                >
+                    {activeItem ? activeItem.label : 'Menu'}
+                    {isMobileOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                </button>
             </div>
 
-            <nav className="sidebar-nav">
+            {/* Navigation List */}
+            <nav className={`sidebar-nav ${isMobileOpen ? 'open' : ''}`}>
                 {menuItems.map((item) => {
-                    const Icon = item.icon;
+                    const IconComponent = item.icon;
                     const isActive = activeTab === item.id;
                     return (
                         <button
                             key={item.id}
-                            className={`sidebar-nav-item ${isActive ? 'active' : ''}`}
-                            onClick={() => onSelectTab && onSelectTab(item.id)}
-                            type="button"
+                            className={`nav-item ${isActive ? 'active' : ''}`}
+                            onClick={() => handleTabClick(item.id)}
                         >
-                            <Icon size={18} />
+                            <IconComponent size={20} className="nav-icon" />
                             <span>{item.label}</span>
                         </button>
                     );
                 })}
-            </nav>
 
-            {currentUser && (
-                <button className="sidebar-logout-btn" onClick={logout} type="button">
-                    <LogOut size={18} />
+                <button className="nav-item logout-btn" onClick={onLogout}>
+                    <LogOut size={20} className="nav-icon" />
                     <span>Logout</span>
                 </button>
-            )}
+            </nav>
         </aside>
     );
 }

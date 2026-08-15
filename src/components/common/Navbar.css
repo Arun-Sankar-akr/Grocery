@@ -194,3 +194,17 @@
         display: flex;
     }
 }
+
+/* Update .logo dimensions for an aligned icon mark */
+.logo {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+}
+
+.navbar-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}

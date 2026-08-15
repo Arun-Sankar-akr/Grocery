@@ -7,7 +7,12 @@ export default function Footer() {
             <div className="footer-container">
                 <div>
                     <div className="footer-brand">
-                        Earth<span>Basket</span>
+                        <img
+                            src="/favicon.png"
+                            alt="EarthBasket Logo"
+                            className="footer-logo-img"
+                        />
+                        <span>Earth</span>Basket
                     </div>
                     <p style={{ color: '#94a3b8', fontSize: '0.85rem', marginBottom: '16px', lineHeight: '1.5' }}>
                         Farm-Fresh Organic. Delivered in Minutes.

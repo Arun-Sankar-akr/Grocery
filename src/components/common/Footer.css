@@ -21,8 +21,15 @@
     color: #ffffff;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     margin-bottom: 12px;
+}
+
+/* Added styles for logo image */
+.footer-logo-img {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
 }
 
 .footer-brand span {
